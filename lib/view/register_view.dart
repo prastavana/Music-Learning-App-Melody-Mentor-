@@ -55,7 +55,7 @@ class BackgroundImageScreen extends StatelessWidget {
           // Background Image - Positioned.fill ensures the image takes the whole screen
           Positioned.fill(
             child: Image.asset(
-              'assets/images/registerr-login.jpeg',
+              'assets/images/gettingstarted2.jpeg',
               fit: BoxFit.cover, // Ensures the image covers the whole screen
               alignment: Alignment.center, // Ensures the image is centered
             ),

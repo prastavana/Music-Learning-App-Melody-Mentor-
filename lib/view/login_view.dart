@@ -46,8 +46,8 @@ class BackgroundImageScreen extends StatelessWidget {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/registerr-login.jpeg'),
-                fit: BoxFit.cover,
+                image: AssetImage('assets/images/gettingstarted2.jpeg'),
+                fit: BoxFit.cover, // This will zoom out the image a bit
                 alignment: Alignment.center,
               ),
             ),

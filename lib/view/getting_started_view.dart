@@ -19,12 +19,12 @@ class GettingStartedView extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         textTheme: TextTheme(
-          displayLarge: GoogleFonts.kanit(
-            fontWeight: FontWeight.w600,
+          displayLarge: GoogleFonts.montserrat(
+            fontWeight: FontWeight.w700,
             fontSize: 41,
             color: Colors.white,
           ),
-          bodyLarge: GoogleFonts.roboto(
+          bodyLarge: GoogleFonts.montserrat(
             fontWeight: FontWeight.w400,
             fontSize: 12.5,
             color: Colors.white,
@@ -67,8 +67,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 description:
                     'Play along to different songs to enhance your skills',
                 imagePath: 'assets/images/instruments.jpg',
-                subtitleFontSize: 20, // Custom subtitle size
-                descriptionFontSize: 14, // Custom description size
+                subtitleFontSize: 20,
+                descriptionFontSize: 14,
+                titleFontSize: 30,
               ),
               OnboardingPage(
                 title: 'Pitch Perfect',
@@ -76,8 +77,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 description:
                     'Achieve flawless sound with our easy-to-use tuning feature, designed to make your instruments performance-ready in no time.',
                 imagePath: 'assets/images/ukulele3.jpg',
-                subtitleFontSize: 22, // Custom subtitle size
-                descriptionFontSize: 12, // Custom description size
+                subtitleFontSize: 22,
+                descriptionFontSize: 12,
+                titleFontSize: 32,
               ),
               OnboardingPage(
                 title: 'Interested in',
@@ -85,13 +87,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 description:
                     'Try Melody Mentor and explore free lessons for different instruments at your ease.',
                 imagePath: 'assets/images/gettingStarted.jpg',
-                subtitleFontSize: 32, // Custom subtitle size
-                descriptionFontSize: 15, // Custom description size
-                showGetStartedButton: true, // Show the button on the last page
+                subtitleFontSize: 35,
+                descriptionFontSize: 15,
+                titleFontSize: 36,
+                showGetStartedButton: true,
               ),
             ],
           ),
-          // Centered Toggle Buttons
           Positioned(
             bottom: MediaQuery.of(context).size.height * 0.05,
             left: 0,
@@ -112,7 +114,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: CircleAvatar(
                       radius: 7,
                       backgroundColor: _currentPage == index
-                          ? const Color(0xFFc900ff) // Active color
+                          ? const Color(0xFFc900ff)
                           : Colors.white.withOpacity(0.5),
                     ),
                   ),
@@ -133,8 +135,9 @@ class OnboardingPage extends StatelessWidget {
   final String imagePath;
   final double subtitleFontSize;
   final double descriptionFontSize;
+  final double titleFontSize;
   final bool showGetStartedButton;
-  final double opacity; // Added opacity property
+  final double opacity;
 
   const OnboardingPage({
     super.key,
@@ -144,8 +147,9 @@ class OnboardingPage extends StatelessWidget {
     required this.imagePath,
     required this.subtitleFontSize,
     required this.descriptionFontSize,
-    this.showGetStartedButton = false, // Default is false
-    this.opacity = 0.2, // Default opacity
+    required this.titleFontSize,
+    this.showGetStartedButton = false,
+    this.opacity = 0.2,
   });
 
   @override
@@ -154,7 +158,6 @@ class OnboardingPage extends StatelessWidget {
 
     return Stack(
       children: [
-        // Background Image
         Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -163,25 +166,20 @@ class OnboardingPage extends StatelessWidget {
             ),
           ),
         ),
-        // Whitish blur effect overlay
         Positioned.fill(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 0.14, sigmaY: 0.14),
             child: Container(
-              color: Colors.white.withOpacity(opacity), // Use dynamic opacity
+              color: Colors.white.withOpacity(opacity),
             ),
           ),
         ),
-        // Centered scrollable content
         Positioned(
-          left: MediaQuery.of(context).size.width *
-              0.1, // Adjust the left margin for centering
-          top: MediaQuery.of(context).size.height *
-              0.35, // Adjust top margin to move content down
+          left: MediaQuery.of(context).size.width * 0.1,
+          top: MediaQuery.of(context).size.height * 0.35,
           child: SingleChildScrollView(
             child: Container(
-              width: MediaQuery.of(context).size.width *
-                  0.8, // 80% width for centering
+              width: MediaQuery.of(context).size.width * 0.8,
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.15),
                 borderRadius: const BorderRadius.vertical(
@@ -191,7 +189,7 @@ class OnboardingPage extends StatelessWidget {
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 40.0, // Decrease horizontal padding to shift left
+                  horizontal: 40.0,
                   vertical: 7.0,
                 ),
                 child: Column(
@@ -201,23 +199,26 @@ class OnboardingPage extends StatelessWidget {
                     const SizedBox(height: 85),
                     Text(
                       title,
-                      style: textTheme.displayLarge,
+                      style: textTheme.displayLarge!.copyWith(
+                        fontSize: titleFontSize, // Dynamic title size
+                      ),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       subtitle,
                       style: textTheme.displayLarge!.copyWith(
-                        fontSize: subtitleFontSize, // Dynamic subtitle size
+                        fontSize: subtitleFontSize,
                       ),
                     ),
-                    const SizedBox(height: 12), // Reduced spacing
+                    const SizedBox(height: 12),
                     Text(
                       description,
-                      style: textTheme.bodyLarge!.copyWith(
-                        fontSize:
-                            descriptionFontSize, // Dynamic description size
+                      style: GoogleFonts.openSans(
+                        fontSize: descriptionFontSize,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
                       ),
-                      textAlign: TextAlign.left, // Align left
+                      textAlign: TextAlign.left,
                     ),
                     if (showGetStartedButton) ...[
                       const SizedBox(height: 27),
@@ -227,7 +228,6 @@ class OnboardingPage extends StatelessWidget {
                           offset: const Offset(-10, 0),
                           child: ElevatedButton(
                             onPressed: () {
-                              // Navigate to the LoginView screen
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -248,7 +248,7 @@ class OnboardingPage extends StatelessWidget {
                             ),
                             child: Text(
                               'GET STARTED',
-                              style: GoogleFonts.firaSans(
+                              style: GoogleFonts.montserrat(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 20,
                                 color: Colors.white,

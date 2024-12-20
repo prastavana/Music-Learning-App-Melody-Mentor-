@@ -49,7 +49,7 @@ class BackgroundImageScreen extends StatelessWidget {
 
     return Scaffold(
       resizeToAvoidBottomInset:
-          true, // Ensure the screen resizes when keyboard appears
+          false, // Prevent UI from resizing when the keyboard appears
       body: Stack(
         children: [
           // Background Image - Positioned.fill ensures the image takes the whole screen

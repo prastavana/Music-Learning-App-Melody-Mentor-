@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class LessonView extends StatelessWidget {
-  const LessonView({super.key});
+class ChordsView extends StatelessWidget {
+  const ChordsView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class LessonView extends StatelessWidget {
                       ),
                       // Lessons text
                       Text(
-                        'Lessons',
+                        'Chords',
                         style: GoogleFonts.montserrat(
                           fontWeight: FontWeight.w800,
                           fontSize: 36,

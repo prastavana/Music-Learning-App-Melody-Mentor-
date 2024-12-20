@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:music_learning_app/view/chords_view.dart';
 
 import 'lesson_view.dart'; // Import the LessonView page
 
@@ -32,6 +33,12 @@ class _DashboardViewState extends State<DashboardView> {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const LessonView()),
+        );
+      } else if (_selectedIndex == 2) {
+        // Navigate to ChordsView when 'Chords' is clicked
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ChordsView()),
         );
       }
     });

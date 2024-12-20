@@ -11,12 +11,12 @@ class RegisterView extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         textTheme: TextTheme(
-          displayLarge: GoogleFonts.kanit(
+          displayLarge: GoogleFonts.montserrat(
             fontWeight: FontWeight.w600,
             fontSize: 39,
             color: Colors.white,
           ),
-          bodyLarge: GoogleFonts.firaSans(
+          bodyLarge: GoogleFonts.montserrat(
             fontWeight: FontWeight.w400,
             fontSize: 12.5,
             color: Colors.white,
@@ -77,12 +77,18 @@ class BackgroundImageScreen extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(
                       top: isPortrait
-                          ? screenHeight * 0.035
+                          ? screenHeight * 0.015
                           : screenHeight * 0.02,
                     ),
                     child: Center(
-                      child: Text('Create an Account',
-                          style: textTheme.displayLarge),
+                      child: Text(
+                        'Create an Account',
+                        style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 33.5,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 30),
@@ -130,7 +136,7 @@ class BackgroundImageScreen extends StatelessWidget {
                     ),
                     child: Text(
                       'Register',
-                      style: GoogleFonts.firaSans(
+                      style: GoogleFonts.montserrat(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
                         color: Colors.white, // Button text color
@@ -147,7 +153,7 @@ class BackgroundImageScreen extends StatelessWidget {
                       children: [
                         Text(
                           'Already have an account? ',
-                          style: GoogleFonts.firaSans(
+                          style: GoogleFonts.montserrat(
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                             color: Colors.white, // Text color
@@ -164,7 +170,7 @@ class BackgroundImageScreen extends StatelessWidget {
                           },
                           child: Text(
                             'Login',
-                            style: GoogleFonts.firaSans(
+                            style: GoogleFonts.montserrat(
                               fontSize: 15,
                               fontWeight: FontWeight.w400,
                               color: Colors.white, // Text color
@@ -191,7 +197,7 @@ class BackgroundImageScreen extends StatelessWidget {
         obscureText: obscureText,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: GoogleFonts.firaSans(
+          labelStyle: GoogleFonts.montserrat(
             color: Colors.white,
           ),
           filled: true,

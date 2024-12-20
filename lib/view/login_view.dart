@@ -58,7 +58,14 @@ class BackgroundImageScreen extends StatelessWidget {
             left: 0,
             right: 0,
             child: Center(
-              child: Text('Welcome Back !', style: textTheme.displayLarge),
+              child: Text(
+                'Welcome Back !',
+                style: GoogleFonts.montserrat(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 38,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ),
           // Login Form
@@ -85,7 +92,7 @@ class BackgroundImageScreen extends StatelessWidget {
                     child: TextField(
                       decoration: InputDecoration(
                         labelText: 'Email',
-                        labelStyle: GoogleFonts.firaSans(
+                        labelStyle: GoogleFonts.openSans(
                             color: Colors.white, fontWeight: FontWeight.w800),
                         filled: true,
                         fillColor: Colors.white.withOpacity(0.4),
@@ -107,7 +114,7 @@ class BackgroundImageScreen extends StatelessWidget {
                     child: TextField(
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        labelStyle: GoogleFonts.firaSans(
+                        labelStyle: GoogleFonts.openSans(
                             color: Colors.white, fontWeight: FontWeight.w800),
                         filled: true,
                         fillColor: Colors.white.withOpacity(0.4),
@@ -141,7 +148,7 @@ class BackgroundImageScreen extends StatelessWidget {
                     ),
                     child: Text(
                       'Log In',
-                      style: GoogleFonts.firaSans(
+                      style: GoogleFonts.openSans(
                         fontSize: 19,
                         fontWeight: FontWeight.w800,
                         color: Colors.white,
@@ -156,7 +163,7 @@ class BackgroundImageScreen extends StatelessWidget {
                     children: [
                       Text(
                         'Don\'t have an account? ',
-                        style: GoogleFonts.firaSans(
+                        style: GoogleFonts.openSans(
                           fontSize: 15,
                           fontWeight: FontWeight.w400,
                           color: Colors.white,

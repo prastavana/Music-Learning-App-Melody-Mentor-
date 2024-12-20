@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:music_learning_app/view/dashboard_view.dart'; // Import the Dashboard view
+import 'package:music_learning_app/view/dashboard_view.dart';
 import 'package:music_learning_app/view/register_view.dart';
 
 class LoginView extends StatelessWidget {
@@ -61,7 +61,7 @@ class BackgroundImageScreen extends StatelessWidget {
               child: Text(
                 'Welcome Back !',
                 style: GoogleFonts.montserrat(
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w600,
                   fontSize: 38,
                   color: Colors.white,
                 ),
@@ -129,14 +129,22 @@ class BackgroundImageScreen extends StatelessWidget {
                   // Login Button
                   ElevatedButton(
                     onPressed: () {
-                      // Add login logic here (e.g., verify credentials)
+                      // Add login logic here, such as verifying credentials
                       // If login is successful:
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const DashboardView(),
-                        ),
-                      );
+                      bool isLoginSuccessful =
+                          true; // Replace with actual logic
+
+                      if (isLoginSuccessful) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const DashboardView(),
+                          ),
+                        );
+                      } else {
+                        // Show an error message if login fails
+                        print('Login failed');
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 11),

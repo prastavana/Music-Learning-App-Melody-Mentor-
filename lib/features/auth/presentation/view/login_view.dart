@@ -1,30 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:music_learning_app/view/dashboard_view.dart';
-import 'package:music_learning_app/view/register_view.dart';
+import 'package:hive/hive.dart';
+import 'package:music_learning_app/core/common/snackbar/my_snackbar.dart';
+import 'package:music_learning_app/features/auth/data/model/auth_hive_model.dart';
+import 'package:music_learning_app/features/auth/presentation/view/register_view.dart';
+import 'package:music_learning_app/features/auth/presentation/view_model/login/login_bloc.dart';
+
+import '../../../dashboard/presentation/view/dashboard_view.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        textTheme: TextTheme(
-          displayLarge: GoogleFonts.kanit(
-            fontWeight: FontWeight.w600,
-            fontSize: 46,
-            color: Colors.white,
-          ),
-          bodyLarge: GoogleFonts.firaSans(
-            fontWeight: FontWeight.w400,
-            fontSize: 12.5,
-            color: Colors.white,
-          ),
-        ),
+    return BlocListener<LoginBloc, LoginState>(
+      listener: (context, state) {
+        if (state.isSuccess) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const DashboardView(),
+            ),
+          );
+        }
+
+        if (!state.isSuccess && !state.isLoading) {
+          showMySnackBar(
+            context: context,
+            message: "Invalid Credentials. Please try again.",
+            color: Colors.red,
+          );
+        }
+
+        if (state.isLoading) {
+          showMySnackBar(
+            context: context,
+            message: "Logging in...",
+            color: Colors.blue,
+          );
+        }
+      },
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: const BackgroundImageScreen(),
       ),
-      home: const BackgroundImageScreen(),
     );
   }
 }
@@ -38,6 +58,9 @@ class BackgroundImageScreen extends StatelessWidget {
     final mediaQuery = MediaQuery.of(context);
     final isPortrait = mediaQuery.orientation == Orientation.portrait;
 
+    final _emailController = TextEditingController();
+    final _passwordController = TextEditingController();
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
@@ -47,7 +70,7 @@ class BackgroundImageScreen extends StatelessWidget {
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/images/gettingstarted2.jpeg'),
-                fit: BoxFit.cover, // This will zoom out the image a bit
+                fit: BoxFit.cover,
                 alignment: Alignment.center,
               ),
             ),
@@ -72,9 +95,7 @@ class BackgroundImageScreen extends StatelessWidget {
           SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: isPortrait
-                    ? 35
-                    : mediaQuery.size.width * 0.225, // 0.55 width in landscape
+                horizontal: isPortrait ? 35 : mediaQuery.size.width * 0.225,
               ).copyWith(
                 top: isPortrait ? 565 : mediaQuery.size.height * 0.4,
                 bottom: 20,
@@ -86,10 +107,10 @@ class BackgroundImageScreen extends StatelessWidget {
                   Container(
                     width: isPortrait
                         ? double.infinity
-                        : mediaQuery.size.width *
-                            0.55, // 0.55 width in landscape
+                        : mediaQuery.size.width * 0.55,
                     height: isPortrait ? 45 : mediaQuery.size.height * 0.11,
                     child: TextField(
+                      controller: _emailController,
                       decoration: InputDecoration(
                         labelText: 'Email',
                         labelStyle: GoogleFonts.openSans(
@@ -108,10 +129,10 @@ class BackgroundImageScreen extends StatelessWidget {
                   Container(
                     width: isPortrait
                         ? double.infinity
-                        : mediaQuery.size.width *
-                            0.55, // 0.55 width in landscape
+                        : mediaQuery.size.width * 0.55,
                     height: isPortrait ? 42 : mediaQuery.size.height * 0.11,
                     child: TextField(
+                      controller: _passwordController,
                       decoration: InputDecoration(
                         labelText: 'Password',
                         labelStyle: GoogleFonts.openSans(
@@ -128,22 +149,35 @@ class BackgroundImageScreen extends StatelessWidget {
 
                   // Login Button
                   ElevatedButton(
-                    onPressed: () {
-                      // Add login logic here, such as verifying credentials
-                      // If login is successful:
-                      bool isLoginSuccessful =
-                          true; // Replace with actual logic
+                    onPressed: () async {
+                      // Fetch user credentials from Hive
+                      var box = await Hive.openBox<AuthHiveModel>('studentBox');
+                      bool isValidUser = false;
 
-                      if (isLoginSuccessful) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const DashboardView(),
+                      for (var auth in box.values) {
+                        if (auth.email == _emailController.text &&
+                            auth.password == _passwordController.text) {
+                          isValidUser = true;
+                          break;
+                        }
+                      }
+
+                      if (isValidUser) {
+                        // Trigger login event if credentials are correct
+                        BlocProvider.of<LoginBloc>(context).add(
+                          LoginStudentEvent(
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                            context: context,
                           ),
                         );
                       } else {
-                        // Show an error message if login fails
-                        print('Login failed');
+                        // Show a snackbar if the credentials are incorrect
+                        showMySnackBar(
+                          context: context,
+                          message: "Invalid Credentials. Please try again.",
+                          color: Colors.red,
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(

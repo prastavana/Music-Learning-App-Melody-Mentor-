@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:music_learning_app/view/chords_view.dart';
-import 'package:music_learning_app/view/lesson_view.dart'; // Import the LessonView page
-import 'package:music_learning_app/view/tuner_view.dart';
+
+import '../../../chords/presentation/view/chords_view.dart';
+import '../../../lessons/presentation/view/lesson_view.dart';
+import '../../../tuner/presentation/view/tuner_view.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({super.key});

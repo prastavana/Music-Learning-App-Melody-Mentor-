@@ -3,15 +3,15 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'login_view.dart'; // Import your LoginView here
+import '../../../auth/presentation/view/login_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const GettingStartedView());
+  runApp(const OnboardingView());
 }
 
-class GettingStartedView extends StatelessWidget {
-  const GettingStartedView({super.key});
+class OnboardingView extends StatelessWidget {
+  const OnboardingView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -231,7 +231,7 @@ class OnboardingPage extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const LoginView(),
+                                  builder: (context) => LoginView(),
                                 ),
                               );
                             },

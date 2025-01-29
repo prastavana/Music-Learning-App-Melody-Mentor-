@@ -25,7 +25,31 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         super(LoginState.initial()) {
     on<NavigateRegisterScreenEvent>(
       (event, emit) {
-        // Navigation logic is now moved to UI
+        Navigator.push(
+          event.context,
+          MaterialPageRoute(
+            builder: (context) => MultiBlocProvider(
+              providers: [
+                BlocProvider.value(value: _registerBloc),
+              ],
+              child: event.destination,
+            ),
+          ),
+        );
+      },
+    );
+
+    on<NavigateHomeScreenEvent>(
+      (event, emit) {
+        Navigator.pushReplacement(
+          event.context,
+          MaterialPageRoute(
+            builder: (context) => BlocProvider.value(
+              value: _dashboardCubit,
+              child: event.destination,
+            ),
+          ),
+        );
       },
     );
 
@@ -51,7 +75,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           },
           (token) {
             emit(state.copyWith(isLoading: false, isSuccess: true));
-            // Remove the navigation here
           },
         );
       },

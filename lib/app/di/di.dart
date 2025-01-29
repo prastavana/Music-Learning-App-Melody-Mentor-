@@ -1,26 +1,25 @@
 import 'package:get_it/get_it.dart';
-import 'package:music_learning_app/features/auth/data/data_source/auth_local_data_souce/auth_local_data_source.dart';
-import 'package:music_learning_app/features/auth/data/repository/auth_local_repository/auth_local_repository.dart';
 import 'package:music_learning_app/features/dashboard/presentation/view_model/dashboard_cubit.dart';
-import 'package:music_learning_app/features/onboarding/presentation/view_model/onboarding_cubit.dart';
 
 import '../../core/network/hive_service.dart';
+import '../../features/auth/data/data_source/auth_local_data_souce/auth_local_data_source.dart';
+import '../../features/auth/data/repository/auth_local_repository/auth_local_repository.dart';
 import '../../features/auth/domain/use_case/login_usecase.dart';
 import '../../features/auth/domain/use_case/register_user_usecase.dart';
 import '../../features/auth/presentation/view_model/login/login_bloc.dart';
 import '../../features/auth/presentation/view_model/signup/register_bloc.dart';
+import '../../features/onboarding/presentation/view_model/onboarding_cubit.dart';
 
 final getIt = GetIt.instance;
 
 Future<void> initDependencies() async {
   // First initialize hive service
   await _initHiveService();
-
-  await _initHomeDependencies();
+  await _initDashboardDependencies();
   await _initRegisterDependencies();
   await _initLoginDependencies();
 
-  await _initOnboardingScreenDependencies();
+  // await _initSplashScreenDependencies();
 }
 
 _initHiveService() {
@@ -48,36 +47,29 @@ _initRegisterDependencies() {
   getIt.registerFactory<RegisterBloc>(
     () => RegisterBloc(
       registerUseCase: getIt(),
-      // LoginBloc: getIt<LoginBloc>(), // Not needed here
     ),
   );
 }
 
-_initLoginDependencies() async {
-  print("Initializing Login Dependencies...");
+_initDashboardDependencies() async {
+  getIt.registerFactory<DashboardCubit>(
+    () => DashboardCubit(),
+  );
+}
 
-  // Registering LoginUseCase
+_initLoginDependencies() async {
   getIt.registerLazySingleton<LoginUseCase>(
-    () => LoginUseCase(getIt<AuthLocalRepository>()),
+    () => LoginUseCase(
+      getIt<AuthLocalRepository>(),
+    ),
   );
 
-  // Registering LoginBloc
   getIt.registerFactory<LoginBloc>(
     () => LoginBloc(
       registerBloc: getIt<RegisterBloc>(),
       dashboardCubit: getIt<DashboardCubit>(),
       loginUseCase: getIt<LoginUseCase>(),
     ),
-  );
-
-  // Check if LoginBloc is correctly registered
-  print("LoginBloc Registered: ${getIt.isRegistered<LoginBloc>()}");
-}
-
-_initHomeDependencies() async {
-  // Register DashboardCubit as a factory
-  getIt.registerFactory<DashboardCubit>(
-    () => DashboardCubit(),
   );
 }
 

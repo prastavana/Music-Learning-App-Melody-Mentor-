@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:music_learning_app/features/dashboard/presentation/view_model/dashboard_cubit.dart';
 
+import '../../core/network/api_service.dart';
 import '../../core/network/hive_service.dart';
 import '../../features/auth/data/data_source/auth_local_data_souce/auth_local_data_source.dart';
 import '../../features/auth/data/repository/auth_local_repository/auth_local_repository.dart';
@@ -18,8 +20,14 @@ Future<void> initDependencies() async {
   await _initDashboardDependencies();
   await _initRegisterDependencies();
   await _initLoginDependencies();
+  await _initApiService();
+}
 
-  // await _initSplashScreenDependencies();
+_initApiService() {
+  //Remote Data Source
+  getIt.registerLazySingleton<Dio>(
+    () => ApiService(Dio()).dio,
+  );
 }
 
 _initHiveService() {

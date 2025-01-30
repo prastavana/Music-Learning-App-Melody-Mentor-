@@ -26,6 +26,12 @@ Future<void> initDependencies() async {
   await _initRegisterDependencies();
   await _initLoginDependencies();
   await _initApiService();
+  await _initSharedPreferences();
+}
+
+Future<void> _initSharedPreferences() async {
+  final sharedPreferences = await SharedPreferences.getInstance();
+  getIt.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
 }
 
 _initApiService() {

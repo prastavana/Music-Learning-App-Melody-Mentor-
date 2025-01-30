@@ -17,12 +17,12 @@ class AuthRemoteDataSource implements IAuthDataSource {
       Response response = await _dio.post(
         ApiEndpoints.register,
         data: {
-          "firstname": student.firstName,
-          "lastname": student.lastName,
+          "firstName": student.firstName,
+          "lastName": student.lastName,
           "image": student.image,
           "email": student.email,
           "password": student.password,
-          "confirmpassword": student.confirmPassword,
+          "confirmPassword": student.confirmPassword,
         },
       );
 
@@ -45,12 +45,12 @@ class AuthRemoteDataSource implements IAuthDataSource {
   }
 
   @override
-  Future<String> loginStudent(String username, String password) async {
+  Future<String> loginStudent(String email, String password) async {
     try {
       Response response = await _dio.post(
         ApiEndpoints.login,
         data: {
-          "username": username,
+          "email": email,
           "password": password,
         },
       );

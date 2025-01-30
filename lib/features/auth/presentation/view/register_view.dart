@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:music_learning_app/features/auth/presentation/view_model/signup/register_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../view_model/login/login_bloc.dart';
 import 'login_view.dart';
@@ -46,6 +50,34 @@ class _BackgroundImageScreenState extends State<BackgroundImageScreen> {
       TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  File? _img;
+
+  checkCameraPermission() async {
+    if (await Permission.camera.request().isRestricted ||
+        await Permission.camera.request().isDenied) {
+      await Permission.camera.request();
+    }
+  }
+
+  Future _browseImage(ImageSource imageSource) async {
+    try {
+      final image = await ImagePicker().pickImage(source: imageSource);
+      if (image != null) {
+        setState(() {
+          _img = File(image.path);
+
+          context.read<RegisterBloc>().add(
+                LoadImage(file: _img!),
+              );
+        });
+      } else {
+        return;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -69,6 +101,62 @@ class _BackgroundImageScreenState extends State<BackgroundImageScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Center(
+                child: GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  checkCameraPermission();
+                                  _browseImage(ImageSource.camera);
+                                  Navigator.pop(context);
+                                },
+                                icon: const Icon(Icons.camera),
+                                label: const Text('Camera'),
+                              ),
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  _browseImage(ImageSource.gallery);
+                                  Navigator.pop(context);
+                                },
+                                icon: const Icon(Icons.image),
+                                label: const Text('Gallery'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  child: SizedBox(
+                    height: 100,
+                    width: 100,
+                    child: ClipOval(
+                      child: _img != null
+                          ? Image.file(
+                              _img!,
+                              fit: BoxFit.cover,
+                              width: 100,
+                              height: 100,
+                            )
+                          : Image.asset(
+                              'assets/images/profile.png', // Your default avatar
+                              fit: BoxFit.cover,
+                              width: 100,
+                              height: 100,
+                            ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 15),
               Center(
                 child: Text(
                   'Create an Account',
@@ -94,7 +182,9 @@ class _BackgroundImageScreenState extends State<BackgroundImageScreen> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
+                  if (_formKey.currentState!.validate()) {
+                    final registerState = context.read<RegisterBloc>().state;
+                    final imageName = registerState.imageName;
                     context.read<RegisterBloc>().add(
                           RegisterStudent(
                             context: context,
@@ -103,6 +193,7 @@ class _BackgroundImageScreenState extends State<BackgroundImageScreen> {
                             email: emailController.text,
                             password: passwordController.text,
                             confirmPassword: confirmPasswordController.text,
+                            image: imageName,
                           ),
                         );
                   } else {

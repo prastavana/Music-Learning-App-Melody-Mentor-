@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:music_learning_app/features/auth/data/repository/auth_remote_repository/auth_remote_repository.dart';
 import 'package:music_learning_app/features/dashboard/presentation/view_model/dashboard_cubit.dart';
 
 import '../../core/network/api_service.dart';
 import '../../core/network/hive_service.dart';
 import '../../features/auth/data/data_source/auth_local_data_souce/auth_local_data_source.dart';
+import '../../features/auth/data/data_source/auth_remote_data_source/auth_remote_data_source.dart';
 import '../../features/auth/data/repository/auth_local_repository/auth_local_repository.dart';
 import '../../features/auth/domain/use_case/login_usecase.dart';
 import '../../features/auth/domain/use_case/register_user_usecase.dart';
@@ -40,21 +42,36 @@ _initRegisterDependencies() {
     () => AuthLocalDataSource(getIt<HiveService>()),
   );
 
+  getIt.registerLazySingleton<AuthRemoteDataSource>(
+    () => AuthRemoteDataSource(getIt<Dio>()),
+  );
+
   // init local repository
   getIt.registerLazySingleton(
     () => AuthLocalRepository(getIt<AuthLocalDataSource>()),
   );
 
+  getIt.registerLazySingleton(
+    () => AuthRemoteRepository(getIt<AuthRemoteDataSource>()),
+  );
+
   // register use usecase
   getIt.registerLazySingleton<RegisterUseCase>(
     () => RegisterUseCase(
-      getIt<AuthLocalRepository>(),
+      getIt<AuthRemoteRepository>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<UploadImageUseCase>(
+    () => UploadImageUseCase(
+      getIt<AuthRemoteRepository>(),
     ),
   );
 
   getIt.registerFactory<RegisterBloc>(
     () => RegisterBloc(
       registerUseCase: getIt(),
+      uploadImageUseCase: getIt(),
     ),
   );
 }
@@ -66,9 +83,15 @@ _initDashboardDependencies() async {
 }
 
 _initLoginDependencies() async {
+  // =========================== Token Shared Preferences ===========================
+  getIt.registerLazySingleton<TokenSharedPrefs>(
+    () => TokenSharedPrefs(getIt<SharedPreferences>()),
+  );
+
   getIt.registerLazySingleton<LoginUseCase>(
     () => LoginUseCase(
-      getIt<AuthLocalRepository>(),
+      getIt<AuthRemoteRepository>(),
+      getIt<TokenSharedPrefs>(),
     ),
   );
 

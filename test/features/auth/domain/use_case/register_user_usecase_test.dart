@@ -67,7 +67,7 @@ void main() {
       verify(() => repository.registerStudent(any())).called(1);
     });
 
-    test('should return Failure when there is a server-side issue', () async {
+    test('should return Failure when there is Api Failure', () async {
       // Arrange
       when(() => repository.registerStudent(any())).thenAnswer((_) async =>
           const Left(ApiFailure(message: "Unexpected server error")));

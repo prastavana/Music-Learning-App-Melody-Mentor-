@@ -30,6 +30,8 @@ dependencies:
   json_annotation: ^4.9.0
   permission_handler: ^11.3.1
   shared_preferences: ^2.3.4
+  mocktail: ^1.0.4
+  
 
 
 

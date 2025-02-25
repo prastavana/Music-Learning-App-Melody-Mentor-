@@ -9,21 +9,17 @@ part 'auth_api_model.g.dart';
 class AuthApiModel extends Equatable {
   @JsonKey(name: '_id')
   final String? id;
-  final String firstName;
-  final String lastName;
-  final String? image;
+  final String name;
+  final String? profilePicture;
   final String email;
   final String? password;
-  final String confirmPassword;
 
   const AuthApiModel({
     this.id,
-    required this.firstName,
-    required this.lastName,
-    required this.image,
+    required this.name,
+    required this.profilePicture,
     required this.email,
     required this.password,
-    required this.confirmPassword,
   });
 
   factory AuthApiModel.fromJson(Map<String, dynamic> json) =>
@@ -35,23 +31,19 @@ class AuthApiModel extends Equatable {
   AuthEntity toEntity() {
     return AuthEntity(
       userId: id,
-      firstName: firstName,
-      lastName: lastName,
+      name: name,
       email: email,
       password: password ?? '',
-      confirmPassword: confirmPassword,
     );
   }
 
   //from Entity
   factory AuthApiModel.fromEntity(AuthEntity entity) {
     return AuthApiModel(
-      firstName: entity.firstName,
-      lastName: entity.lastName,
-      image: entity.image,
+      name: entity.name,
+      profilePicture: entity.profilePicture,
       email: entity.email,
       password: entity.password,
-      confirmPassword: entity.confirmPassword,
     );
   }
 

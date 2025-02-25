@@ -31,12 +31,10 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   ) async {
     emit(state.copyWith(isLoading: true));
     final result = await _registerUseCase.call(RegisterUserParams(
-      firstName: event.firstName,
-      lastName: event.lastName,
+      name: event.name,
       email: event.email,
       password: event.password,
-      confirmPassword: event.confirmPassword,
-      image: state.imageName,
+      profilePicture: state.imageName,
     ));
 
     result.fold(

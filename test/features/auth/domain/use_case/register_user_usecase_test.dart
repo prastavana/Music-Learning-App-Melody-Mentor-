@@ -4,6 +4,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:music_learning_app/core/error/failure.dart';
 import 'package:music_learning_app/features/auth/domain/entity/auth_entity.dart';
 import 'package:music_learning_app/features/auth/domain/use_case/register_user_usecase.dart';
+
 import 'repository.mock.dart';
 
 void main() {
@@ -14,20 +15,16 @@ void main() {
     repository = MockAuthRepository();
     useCase = RegisterUseCase(repository);
     registerFallbackValue(const AuthEntity(
-      firstName: '',
-      lastName: '',
+      name: '',
       email: '',
       password: '',
-      confirmPassword: '',
     ));
   });
 
   const registerParams = RegisterUserParams(
-    firstName: "prasta",
-    lastName: "here",
+    name: "prasta",
     email: "prasta@gmail.com",
     password: "prasta123",
-    confirmPassword: "prasta123",
   );
 
   group('RegisterUseCase Tests', () {
@@ -48,11 +45,9 @@ void main() {
     test('should return Failure when required fields are missing', () async {
       // Arrange
       final invalidParams = RegisterUserParams(
-        firstName: "",
-        lastName: "here",
+        name: "",
         email: "prasta@gmail.com",
         password: "prasta123",
-        confirmPassword: "prasta123",
       );
 
       when(() => repository.registerStudent(any())).thenAnswer((_) async =>
@@ -99,11 +94,9 @@ void main() {
     test('should return Failure when passwords do not match', () async {
       // Arrange
       final mismatchedParams = RegisterUserParams(
-        firstName: "prasta",
-        lastName: "here",
+        name: "prasta",
         email: "prasta@gmail.com",
         password: "prasta123",
-        confirmPassword: "differentPassword",
       );
 
       when(() => repository.registerStudent(any())).thenAnswer((_) async =>

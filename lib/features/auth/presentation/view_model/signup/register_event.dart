@@ -17,20 +17,16 @@ class LoadImage extends RegisterEvent {
 
 class RegisterStudent extends RegisterEvent {
   final BuildContext context;
-  final String firstName;
-  final String lastName;
+  final String name;
   final String email;
   final String password;
-  final String confirmPassword;
-  final String? image;
+  final String? profilePicture;
 
   const RegisterStudent({
     required this.context,
-    required this.firstName,
-    required this.lastName,
+    required this.name,
     required this.email,
     required this.password,
-    required this.confirmPassword,
-    this.image,
+    this.profilePicture,
   });
 }

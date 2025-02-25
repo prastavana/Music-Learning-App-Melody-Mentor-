@@ -42,12 +42,9 @@ class BackgroundImageScreen extends StatefulWidget {
 }
 
 class _BackgroundImageScreenState extends State<BackgroundImageScreen> {
-  final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   File? _img;
@@ -168,16 +165,11 @@ class _BackgroundImageScreenState extends State<BackgroundImageScreen> {
                 ),
               ),
               const SizedBox(height: 30),
-              _buildTextField(firstNameController, 'First Name'),
-              const SizedBox(height: 10),
-              _buildTextField(lastNameController, 'Last Name'),
+              _buildTextField(nameController, 'First Name'),
               const SizedBox(height: 10),
               _buildTextField(emailController, 'Email'),
               const SizedBox(height: 10),
               _buildTextField(passwordController, 'Password',
-                  obscureText: true),
-              const SizedBox(height: 10),
-              _buildTextField(confirmPasswordController, 'Confirm Password',
                   obscureText: true),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -188,12 +180,10 @@ class _BackgroundImageScreenState extends State<BackgroundImageScreen> {
                     context.read<RegisterBloc>().add(
                           RegisterStudent(
                             context: context,
-                            firstName: firstNameController.text,
-                            lastName: lastNameController.text,
+                            name: nameController.text,
                             email: emailController.text,
                             password: passwordController.text,
-                            confirmPassword: confirmPasswordController.text,
-                            image: imageName,
+                            profilePicture: imageName,
                           ),
                         );
                   } else {

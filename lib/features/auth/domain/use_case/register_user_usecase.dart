@@ -7,41 +7,29 @@ import '../entity/auth_entity.dart';
 import '../repository/auth_repository.dart';
 
 class RegisterUserParams extends Equatable {
-  final String firstName; // updated to firstName
-  final String lastName; // updated to lastName
+  final String name; // updated to firstName
   final String email; // updated to email
   final String password;
-  final String confirmPassword; // added confirmPassword
-  final String? image;
+  final String? profilePicture;
 
   const RegisterUserParams({
-    required this.firstName, // updated to firstName
-    required this.lastName, // updated to lastName
+    required this.name, // updated to firstName
     required this.email, // updated to email
     required this.password,
-    required this.confirmPassword,
-    this.image,
+    this.profilePicture,
   });
 
   // Initial constructor
   const RegisterUserParams.initial({
-    required this.firstName, // updated to firstName
-    required this.lastName, // updated to lastName
+    required this.name, // updated to firstName
     required this.email, // updated to email
     required this.password,
-    required this.confirmPassword, // added confirmPassword
-    required this.image,
+    required this.profilePicture,
   });
 
   @override
-  List<Object?> get props => [
-        firstName,
-        lastName,
-        email,
-        password,
-        confirmPassword,
-        image
-      ]; // updated props
+  List<Object?> get props =>
+      [name, email, password, profilePicture]; // updated props
 }
 
 class RegisterUseCase implements UsecaseWithParams<void, RegisterUserParams> {
@@ -52,12 +40,10 @@ class RegisterUseCase implements UsecaseWithParams<void, RegisterUserParams> {
   @override
   Future<Either<Failure, void>> call(RegisterUserParams params) {
     final authEntity = AuthEntity(
-      firstName: params.firstName, // updated to firstName
-      lastName: params.lastName, // updated to lastName
+      name: params.name, // updated to firstName
       email: params.email, // updated to email
       password: params.password,
-      confirmPassword: params.confirmPassword, // added confirmPassword
-      image: params.image,
+      profilePicture: params.profilePicture,
     );
     return repository.registerStudent(authEntity);
   }

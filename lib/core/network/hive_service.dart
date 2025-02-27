@@ -3,6 +3,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../app/constants/hive_table_constant.dart';
 import '../../features/auth/data/model/auth_hive_model.dart';
+import '../../features/chords/data/model/song_hive_model.dart';
 
 class HiveService {
   static Future<void> init() async {
@@ -14,6 +15,7 @@ class HiveService {
 
     // Register Adapters
     Hive.registerAdapter(AuthHiveModelAdapter());
+    Hive.registerAdapter(SongHiveModelAdapter());
   }
 
   Future<void> register(AuthHiveModel auth) async {
@@ -50,5 +52,17 @@ class HiveService {
 
   Future<void> close() async {
     await Hive.close();
+  }
+
+  // Add the getAllSongs method here
+  Future<List<SongHiveModel>> getAllSongs() async {
+    var box = await Hive.openBox<SongHiveModel>(HiveTableConstant.songBox);
+    return box.values.toList(); // Fetch and return all songs
+  }
+
+  // Add the getSongById method here if you haven't already
+  Future<SongHiveModel?> getSongById(String id) async {
+    var box = await Hive.openBox<SongHiveModel>(HiveTableConstant.songBox);
+    return box.get(id); // Fetch song by ID from the box
   }
 }

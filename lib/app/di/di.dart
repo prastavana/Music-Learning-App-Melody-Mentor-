@@ -22,10 +22,11 @@ final getIt = GetIt.instance;
 Future<void> initDependencies() async {
   // First initialize hive service
   await _initHiveService();
+  await _initApiService();
+  // await _initSongDependencies();
   await _initDashboardDependencies();
   await _initRegisterDependencies();
   await _initLoginDependencies();
-  await _initApiService();
   await _initSharedPreferences();
 }
 
@@ -118,3 +119,50 @@ _initOnboardingScreenDependencies() async {
     () => OnboardingCubit(getIt<LoginBloc>()),
   );
 }
+
+// _initSongDependencies() {
+//   // Register SongRemoteDataSource as ISongDataSource
+//   getIt.registerLazySingleton<ISongDataSource>(
+//     () => SongRemoteDataSource(getIt<Dio>()),
+//   );
+//
+//   // Register SongLocalDataSource
+//   getIt.registerLazySingleton<SongLocalDataSource>(
+//     () => SongLocalDataSource(hiveService: getIt<HiveService>()),
+//   );
+//
+//   // Register Remote Repository
+//   getIt.registerLazySingleton<SongRemoteRepository>(
+//     () => SongRemoteRepository(
+//       remoteDataSource: getIt<ISongDataSource>(), // Use ISongDataSource here
+//     ),
+//   );
+//
+//   // Register Local Repository
+//   getIt.registerLazySingleton<SongLocalRepository>(
+//     () => SongLocalRepository(
+//       songLocalDataSource: getIt<SongLocalDataSource>(),
+//     ),
+//   );
+//
+//   // Register Use Cases
+//   getIt.registerLazySingleton<GetAllSongsUseCase>(
+//     () => GetAllSongsUseCase(
+//       songDataSource: getIt<ISongDataSource>(), // Use ISongDataSource here
+//     ),
+//   );
+//
+//   getIt.registerLazySingleton<GetSongByIdUseCase>(
+//     () => GetSongByIdUseCase(
+//       songDataSource: getIt<ISongDataSource>(), // Use ISongDataSource here
+//     ),
+//   );
+//
+//   // Register SongBloc
+//   getIt.registerFactory<SongBloc>(
+//     () => SongBloc(
+//       getAllSongsUseCase: getIt<GetAllSongsUseCase>(),
+//       getSongByIdUseCase: getIt<GetSongByIdUseCase>(),
+//     ),
+//   );
+// }

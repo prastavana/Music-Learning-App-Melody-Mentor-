@@ -14,11 +14,9 @@ class AuthLocalDataSource implements IAuthDataSource {
   Future<AuthEntity> getCurrentUser() {
     // Return only the relevant fields
     return Future.value(AuthEntity(
-      firstName: "", // updated field
-      lastName: "", // updated field
+      name: "", // updated field
       email: "", // updated field
       password: "", // updated field
-      confirmPassword: "", // updated field
     ));
   }
 

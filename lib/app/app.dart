@@ -15,7 +15,7 @@ class App extends StatelessWidget {
       title: 'Melody Mentor',
       home: BlocProvider.value(
         value: getIt<LoginBloc>(),
-        child: const OnboardingView(),
+        child: OnboardingView(),
       ),
     );
   }

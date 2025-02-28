@@ -15,4 +15,9 @@ class ApiEndpoints {
   static const String deleteStudent = "auth/deleteStudent/";
   static const String imageUrl = "http://10.0.2.2:3000/uploads/";
   static const String uploadImage = "auth/uploadImage";
+
+  // ====================== SOong Routes ======================
+  static const String getAllSongs =
+      "songs/getsongs"; // Route for fetching all songs
+  static const String getSongById = "songs/"; // Route for fetching a song by ID
 }

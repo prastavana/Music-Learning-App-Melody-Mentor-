@@ -1,8 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
 import '../../../../app/constants/api_endpoints.dart';
+import '../../../../core/theme/colors.dart';
 
 class SongDetailsView extends StatelessWidget {
   final Map<String, dynamic> song;
@@ -12,25 +11,57 @@ class SongDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(song['songName'])),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Warning: Lyrics may not be displayed correctly."),
-            _buildSection(
-              title: "Chord Diagrams",
-              items: song['chordDiagrams'],
-              itemBuilder: (item) => _buildImageWithLabel(item),
-            ),
-            _buildSection(
-              title: "Lyrics",
-              items: song['lyrics'],
-              itemBuilder: (item) => _buildLyricText(item),
-            ),
-          ],
+      appBar: AppBar(
+        title: Text(
+          song['songName'],
+          style: TextStyle(
+              color: Colors.white), // Set songName text color to white
         ),
+        backgroundColor: Colors.black,
+      ),
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.darkGradientStart,
+                  AppColors.darkGradientMid1,
+                  AppColors.darkGradientMid2,
+                  AppColors.darkGradientMid3,
+                  AppColors.darkGradientEnd,
+                ],
+              ),
+            ),
+          ),
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Warning: Lyrics may not be displayed correctly.",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  _buildSection(
+                    title: "Chord Diagrams",
+                    items: song['chordDiagrams'],
+                    itemBuilder: (item) => _buildImage(item),
+                  ),
+                  _buildSection(
+                    title: "Lyrics",
+                    items: song['lyrics'],
+                    itemBuilder: (item) => _buildLyricText(item),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -45,117 +76,82 @@ class SongDetailsView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+        Text(title,
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         SizedBox(height: 8),
-        ...items.map((item) => itemBuilder(item)).toList(),
+        Wrap(
+          spacing: 8.0,
+          runSpacing: 8.0,
+          children: items.map((item) => itemBuilder(item)).toList(),
+        ),
         SizedBox(height: 16),
       ],
     );
   }
 
-  Widget _buildImageWithLabel(String imagePath) {
+  Widget _buildImage(String imagePath) {
     final correctedImagePath = imagePath.replaceFirst("uploads/", "");
     final imageUrl = ApiEndpoints.imageUrl + correctedImagePath;
-    print("Image URL: $imageUrl");
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Diagram: $imagePath"),
-          Image.network(
-            imageUrl,
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) return child;
-              return Center(
-                child: CircularProgressIndicator(
-                  value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                      : null,
-                ),
-              );
-            },
-            errorBuilder: (context, exception, stackTrace) {
-              print('Image load error: $exception');
-              return Column(
-                children: [
-                  Text('Failed to load image'),
-                  Icon(Icons.error, color: Colors.red),
-                ],
-              );
-            },
-          ),
-        ],
+    return SizedBox(
+      width: 100,
+      height: 100,
+      child: Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Center(
+            child: CircularProgressIndicator(
+              value: loadingProgress.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded /
+                      loadingProgress.expectedTotalBytes!
+                  : null,
+            ),
+          );
+        },
+        errorBuilder: (context, exception, stackTrace) {
+          print('Image load error: $exception');
+          return SizedBox(
+            width: 100,
+            height: 100,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error, color: Colors.red),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 
   Widget _buildLyricText(dynamic lyric) {
     if (lyric is Map && lyric.containsKey('section')) {
-      if (lyric.containsKey('parsedDocxFile') &&
-          lyric['parsedDocxFile'] is List &&
-          lyric['parsedDocxFile'].isNotEmpty) {
-        final parsedLyric = lyric['parsedDocxFile'][0];
-        if (parsedLyric is String) {
-          if (parsedLyric == "[object Object]") {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text("Lyrics not available."),
-            );
-          }
-          final parts = parsedLyric.split(",");
-          bool allObjectObject = true;
-          for (final part in parts) {
-            if (part != "[object Object]") {
-              allObjectObject = false;
-              break;
-            }
-          }
-
-          if (allObjectObject) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text("Lyrics not available."),
-            );
-          }
-          try {
-            // Attempt to parse the stringified array
-            final parsedArray = json.decode(parsedLyric);
-            if (parsedArray is List) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: parsedArray
-                      .map<Widget>((item) => Text(item['lyrics'] ?? ''))
-                      .toList(),
-                ),
-              );
-            }
-          } catch (e) {
-            // If parsing fails, display the section
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Column(
-                children: [
-                  Text("Error parsing lyrics."),
-                  Text("Section: ${lyric['section']}"),
-                  Text("Please report this issue."),
-                ],
-              ),
-            );
-          }
+      if (lyric.containsKey('parsedDocxFile')) {
+        final parsedLyric = lyric['parsedDocxFile'];
+        if (parsedLyric is String && parsedLyric.isNotEmpty) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Text(parsedLyric, style: TextStyle(color: Colors.white)),
+          );
+        } else {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child:
+                Text(lyric['section'], style: TextStyle(color: Colors.white)),
+          );
         }
       }
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Text(lyric['section']),
+        child: Text(lyric['section'], style: TextStyle(color: Colors.white)),
       );
     } else {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Text("Invalid Lyric Format"),
+        child:
+            Text("Invalid Lyric Format", style: TextStyle(color: Colors.white)),
       );
     }
   }

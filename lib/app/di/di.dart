@@ -14,6 +14,13 @@ import '../../features/auth/domain/use_case/register_user_usecase.dart';
 import '../../features/auth/domain/use_case/upload_image_usecase.dart';
 import '../../features/auth/presentation/view_model/login/login_bloc.dart';
 import '../../features/auth/presentation/view_model/signup/register_bloc.dart';
+import '../../features/chords/data/data_source/song_data_source.dart';
+import '../../features/chords/data/data_source/song_local_data_source/song_local_data_source.dart';
+import '../../features/chords/data/data_source/song_remote_data_source/song_remote_data_source.dart';
+import '../../features/chords/data/repository/song_local_repository.dart';
+import '../../features/chords/data/repository/song_remote_repository.dart';
+import '../../features/chords/domain/use_case/song_usecase.dart';
+import '../../features/chords/presentation/view_model/song_bloc.dart';
 import '../../features/onboarding/presentation/view_model/onboarding_cubit.dart';
 import '../shared_prefs/token_shared_prefs.dart';
 
@@ -23,7 +30,7 @@ Future<void> initDependencies() async {
   // First initialize hive service
   await _initHiveService();
   await _initApiService();
-  // await _initSongDependencies();
+  await _initSongDependencies();
   await _initDashboardDependencies();
   await _initRegisterDependencies();
   await _initLoginDependencies();
@@ -120,49 +127,49 @@ _initOnboardingScreenDependencies() async {
   );
 }
 
-// _initSongDependencies() {
-//   // Register SongRemoteDataSource as ISongDataSource
-//   getIt.registerLazySingleton<ISongDataSource>(
-//     () => SongRemoteDataSource(getIt<Dio>()),
-//   );
-//
-//   // Register SongLocalDataSource
-//   getIt.registerLazySingleton<SongLocalDataSource>(
-//     () => SongLocalDataSource(hiveService: getIt<HiveService>()),
-//   );
-//
-//   // Register Remote Repository
-//   getIt.registerLazySingleton<SongRemoteRepository>(
-//     () => SongRemoteRepository(
-//       remoteDataSource: getIt<ISongDataSource>(), // Use ISongDataSource here
-//     ),
-//   );
-//
-//   // Register Local Repository
-//   getIt.registerLazySingleton<SongLocalRepository>(
-//     () => SongLocalRepository(
-//       songLocalDataSource: getIt<SongLocalDataSource>(),
-//     ),
-//   );
-//
-//   // Register Use Cases
-//   getIt.registerLazySingleton<GetAllSongsUseCase>(
-//     () => GetAllSongsUseCase(
-//       songDataSource: getIt<ISongDataSource>(), // Use ISongDataSource here
-//     ),
-//   );
-//
-//   getIt.registerLazySingleton<GetSongByIdUseCase>(
-//     () => GetSongByIdUseCase(
-//       songDataSource: getIt<ISongDataSource>(), // Use ISongDataSource here
-//     ),
-//   );
-//
-//   // Register SongBloc
-//   getIt.registerFactory<SongBloc>(
-//     () => SongBloc(
-//       getAllSongsUseCase: getIt<GetAllSongsUseCase>(),
-//       getSongByIdUseCase: getIt<GetSongByIdUseCase>(),
-//     ),
-//   );
-// }
+_initSongDependencies() {
+  // Register SongRemoteDataSource as ISongDataSource
+  getIt.registerLazySingleton<ISongDataSource>(
+    () => SongRemoteDataSource(getIt<Dio>()),
+  );
+
+  // Register SongLocalDataSource
+  getIt.registerLazySingleton<SongLocalDataSource>(
+    () => SongLocalDataSource(hiveService: getIt<HiveService>()),
+  );
+
+  // Register Remote Repository
+  getIt.registerLazySingleton<SongRemoteRepository>(
+    () => SongRemoteRepository(
+      remoteDataSource: getIt<ISongDataSource>(), // Use ISongDataSource here
+    ),
+  );
+
+  // Register Local Repository
+  getIt.registerLazySingleton<SongLocalRepository>(
+    () => SongLocalRepository(
+      songLocalDataSource: getIt<SongLocalDataSource>(),
+    ),
+  );
+
+  // Register Use Cases
+  getIt.registerLazySingleton<GetAllSongsUseCase>(
+    () => GetAllSongsUseCase(
+      songDataSource: getIt<ISongDataSource>(), // Use ISongDataSource here
+    ),
+  );
+
+  getIt.registerLazySingleton<GetSongByIdUseCase>(
+    () => GetSongByIdUseCase(
+      songDataSource: getIt<ISongDataSource>(), // Use ISongDataSource here
+    ),
+  );
+
+  // Register SongBloc
+  getIt.registerFactory<SongBloc>(
+    () => SongBloc(
+      getAllSongsUseCase: getIt<GetAllSongsUseCase>(),
+      getSongByIdUseCase: getIt<GetSongByIdUseCase>(),
+    ),
+  );
+}

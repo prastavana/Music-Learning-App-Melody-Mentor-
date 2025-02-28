@@ -15,6 +15,10 @@ class DashboardCubit extends Cubit<DashboardState> {
     emit(state.copyWith(selectedIndex: index));
   }
 
+  void setSelectedIndex(int index) {
+    emit(state.copyWith(selectedIndex: index));
+  }
+
   void logout(BuildContext context) {
     // Wait for 2 seconds
     Future.delayed(const Duration(seconds: 2), () async {

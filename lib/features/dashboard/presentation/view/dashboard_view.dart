@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:music_learning_app/features/chords/presentation/view_model/song_bloc.dart';
-import 'package:music_learning_app/features/chords/presentation/view_model/song_state.dart';
-import 'package:music_learning_app/features/dashboard/presentation/view_model/dashboard_cubit.dart';
-import 'package:music_learning_app/features/dashboard/presentation/view_model/dashboard_state.dart';
+
+import '../../../chords/presentation/view/song_view.dart';
+import '../view_model/dashboard_cubit.dart';
+import '../view_model/dashboard_state.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({super.key});
@@ -16,31 +16,68 @@ class DashboardView extends StatefulWidget {
 class _DashboardViewState extends State<DashboardView> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DashboardCubit, DashboardState>(
-      builder: (context, state) {
-        double screenHeight = MediaQuery.of(context).size.height;
-        double screenWidth = MediaQuery.of(context).size.width;
-        bool isPortrait = screenHeight > screenWidth;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isPortrait = screenHeight > screenWidth;
 
-        return Scaffold(
-          body: Stack(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black, // Set AppBar to black
+        title: Text(
+          'Melody Mentor',
+          style: GoogleFonts.kanit(
+              fontSize: 24,
+              fontWeight: FontWeight.w800,
+              color: Colors.white), // White text for the title
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout, color: Colors.white), // White icon
+            onPressed: () {
+              context.read<DashboardCubit>().logout(context);
+            },
+          ),
+        ],
+      ),
+      body: BlocBuilder<DashboardCubit, DashboardState>(
+        builder: (context, state) {
+          return Stack(
             children: [
-              // Background image
-              Positioned.fill(
-                child: Image.asset(
-                  'assets/images/background.jpg',
-                  fit: BoxFit.cover,
+// Updated Gradient background
+              Container(
+                height: double.infinity,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withOpacity(1), // Black at the top
+                      const Color(0xFF1F0B6F)
+                          .withOpacity(0.8), // Intermediate dark purple
+                      const Color(0xFF3C19AA), // Purple
+                      const Color(0xFF6929CF), // Light purple
+                      const Color(0xFFB964E9), // Lighter purple
+                    ],
+                    stops: [
+                      0.35, // Black starts from the top
+                      0.65, // Black takes 45% of the gradient
+                      0.75, // Intermediate dark purple starts at 45%
+                      0.85, // Purple starts at 60%
+                      1.0, // Lighter purple ends at 100%
+                    ],
+                  ),
                 ),
               ),
-              // Main content
+// Main content
               SingleChildScrollView(
                 child: Column(
                   children: [
-                    // Welcome message
+// Welcome message
                     Padding(
                       padding: EdgeInsets.only(
                         top: isPortrait
-                            ? screenHeight * 0.07
+                            ? screenHeight * 0.01
                             : screenHeight * 0.10,
                         left: 34,
                         right: 20,
@@ -73,12 +110,19 @@ class _DashboardViewState extends State<DashboardView> {
                         ],
                       ),
                     ),
-                    // Explore card
+// Explore card
                     Padding(
-                      padding: const EdgeInsets.all(20.0),
+                      padding: EdgeInsets.only(
+                        top: isPortrait
+                            ? screenHeight * 0.04
+                            : screenHeight * 0.04,
+                        left: 20,
+                        right: 20,
+                      ),
                       child: Card(
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(40)),
+                          borderRadius: BorderRadius.circular(40),
+                        ),
                         elevation: 5,
                         color: Colors.white.withOpacity(0.5),
                         child: Row(
@@ -122,148 +166,241 @@ class _DashboardViewState extends State<DashboardView> {
                         ),
                       ),
                     ),
-                    // Two side-by-side cards
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                context.read<DashboardCubit>().onTabTapped(
-                                    2); // Update tab to Chords page
-                                // Use the new navigateToSongView method
-                                context
-                                    .read<DashboardCubit>()
-                                    .navigateToSongView(context);
-                              },
-                              child: _buildFeatureCard(
-                                'assets/images/guitar2.jpg',
-                                'Play-along song',
-                                'with chords',
+// Two side-by-side cards (play-along and take the pick)
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SongView()),
+                        );
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          top: isPortrait
+                              ? screenHeight * 0.04
+                              : screenHeight * 0.05,
+                          left: 20,
+                          right: 20,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                elevation: 5,
+                                color: Colors.white.withOpacity(0.5),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(25),
+                                  child: SizedBox(
+                                    height: 170,
+                                    child: Stack(
+                                      children: [
+                                        Image.asset(
+                                          'assets/images/guitar2.jpg',
+                                          fit: BoxFit.cover,
+                                          width: isPortrait
+                                              ? 300
+                                              : screenWidth * 0.70,
+                                          height: isPortrait
+                                              ? 200
+                                              : screenWidth * 0.20,
+                                        ),
+                                        const Positioned(
+                                          top: 10,
+                                          left: 10,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Play-along song',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white),
+                                              ),
+                                              Text(
+                                                'with chords',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                          if (!isPortrait) const SizedBox(width: 20),
-                          Expanded(
-                            child: _buildFeatureCard(
-                              'assets/images/pick.jpg',
-                              'Tune your ',
-                              'Instrument Easily',
+                            if (!isPortrait) const SizedBox(width: 20),
+                            Expanded(
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                elevation: 5,
+                                color: Colors.white.withOpacity(0.5),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: SizedBox(
+                                    height: 170,
+                                    child: Stack(
+                                      children: [
+                                        Image.asset(
+                                          'assets/images/pick.jpg',
+                                          width: isPortrait
+                                              ? 180
+                                              : screenWidth * 0.70,
+                                          height: isPortrait
+                                              ? 170
+                                              : screenWidth * 0.20,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        const Positioned(
+                                          bottom: 10,
+                                          right: 10,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                'Tune your ',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white),
+                                              ),
+                                              Text(
+                                                'Instrument Easily ',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                    // Song list or loading
+// Text for beginner song
                     Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: BlocBuilder<SongBloc, SongState>(
-                        builder: (context, songState) {
-                          if (songState is SongLoading) {
-                            return CircularProgressIndicator();
-                          } else if (songState is SongError) {
-                            return Text(
-                              songState.message,
-                              style: TextStyle(color: Colors.red),
-                            );
-                          } else if (songState is SongLoaded) {
-                            return ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: songState.songs.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(songState.songs[index]
-                                      .songName), // Use songName here
-                                );
-                              },
-                            );
-                          }
-                          return SizedBox();
-                        },
+                      padding: EdgeInsets.only(
+                        top: isPortrait
+                            ? screenHeight * 0.06
+                            : screenHeight * 0.13,
+                        left: 35,
+                        right: 20,
+                      ),
+                      child: const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Play your first beginner song',
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                      ),
+                    ),
+// Card with IM Yours song
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: isPortrait
+                            ? screenHeight * 0.025
+                            : screenHeight * 0.02,
+                        left: 20,
+                        right: 20,
+                      ),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        elevation: 5,
+                        color: Colors.white.withOpacity(0.5),
+                        child: Row(
+                          children: [
+                            const Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'IM Yours song',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                    SizedBox(height: 10),
+                                    Text('GET STARTED',
+                                        style: TextStyle(
+                                            fontSize: 14, color: Colors.white)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topRight: Radius.circular(40),
+                                bottomRight: Radius.circular(40),
+                              ),
+                              child: SizedBox(
+                                width: isPortrait ? 180 : screenWidth * 0.3,
+                                height: 130,
+                                child: Image.asset(
+                                  'assets/images/im_yours.jpg',
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
             ],
+          );
+        },
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: context.read<DashboardCubit>().state.selectedIndex,
+        onTap: (index) {
+          context.read<DashboardCubit>().onTabTapped(index);
+        },
+        backgroundColor: Colors.black,
+        selectedItemColor: Color(0xFFB964E9),
+        unselectedItemColor: Colors.white,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Dashboard',
           ),
-          bottomNavigationBar: BottomNavigationBar(
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.library_books),
-                label: 'Lessons',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.music_note),
-                label: 'Chords',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.tune),
-                label: 'Tuner',
-              ),
-            ],
-            currentIndex:
-                state.selectedIndex, // Use selectedIndex from the state
-            selectedItemColor: Colors.amber[800],
-            onTap: (index) {
-              context
-                  .read<DashboardCubit>()
-                  .onTabTapped(index); // Handle tab change
-            },
+          BottomNavigationBarItem(
+            icon: Icon(Icons.music_note),
+            label: 'Songs',
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildFeatureCard(String imagePath, String title, String subtitle) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      elevation: 5,
-      color: Colors.white.withOpacity(0.5),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(25),
-        child: SizedBox(
-          height: 170,
-          child: Stack(
-            children: [
-              Image.asset(
-                imagePath,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-              ),
-              Positioned(
-                top: 10,
-                left: 10,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: 'Lessons',
           ),
-        ),
+        ],
       ),
     );
   }

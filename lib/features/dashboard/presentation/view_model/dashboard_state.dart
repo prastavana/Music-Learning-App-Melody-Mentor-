@@ -1,13 +1,11 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:music_learning_app/features/chords/presentation/view/song_view.dart';
-import 'package:music_learning_app/features/chords/presentation/view_model/song_bloc.dart';
-import 'package:music_learning_app/features/dashboard/presentation/view/dashboard_view.dart';
 
-import '../../../../app/di/di.dart';
+import '../../../chords/presentation/view/song_view.dart';
+import '../../../lessons/presentation/view/lesson_view.dart';
+import '../view/dashboard_view.dart';
 
-class DashboardState extends Equatable {
+@immutable
+class DashboardState {
   final int selectedIndex;
   final List<Widget> views;
 
@@ -16,31 +14,21 @@ class DashboardState extends Equatable {
     required this.views,
   });
 
-  /// Initial state of the dashboard
-  static DashboardState initial() {
-    return DashboardState(
-      selectedIndex: 0,
-      views: [
-        const DashboardView(),
-        BlocProvider(
-          create: (context) => getIt<SongBloc>(),
-          child: SongView(),
-        ),
-      ],
-    );
-  }
+  factory DashboardState.initial() => DashboardState(
+        selectedIndex: 0, // Default to DashboardView
+        views: [
+          DashboardView(), // Index 0
+          SongView(), // Index 1
+          LessonView(), // Index 2
+          // SessionView(),    // Index 3
+          // SettingView(),    // Index 4
+        ],
+      );
 
-  /// Returns a new instance of DashboardState with updated values
-  DashboardState copyWith({
-    int? selectedIndex,
-    List<Widget>? views,
-  }) {
+  DashboardState copyWith({int? selectedIndex}) {
     return DashboardState(
       selectedIndex: selectedIndex ?? this.selectedIndex,
-      views: views ?? this.views,
+      views: views,
     );
   }
-
-  @override
-  List<Object?> get props => [selectedIndex, views];
 }

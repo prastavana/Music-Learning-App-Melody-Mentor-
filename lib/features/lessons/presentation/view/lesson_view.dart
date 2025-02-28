@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/theme/colors.dart';
 import '../view_model/lesson_bloc.dart';
 import '../view_model/lesson_event.dart';
 import '../view_model/lesson_state.dart';
@@ -12,7 +13,7 @@ class LessonView extends StatefulWidget {
 
 class _LessonViewState extends State<LessonView> {
   String _selectedInstrument = 'ukulele';
-  Set<int> completedLessons = {}; // Store completed lesson indices.
+  Set<int> completedLessons = {};
 
   @override
   void initState() {
@@ -29,82 +30,124 @@ class _LessonViewState extends State<LessonView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Lessons')),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SegmentedButton<String>(
-              segments: const <ButtonSegment<String>>[
-                ButtonSegment<String>(
-                  value: 'ukulele',
-                  label: Text('Ukulele'),
-                ),
-                ButtonSegment<String>(
-                  value: 'guitar',
-                  label: Text('Guitar'),
-                ),
-                ButtonSegment<String>(
-                  value: 'piano',
-                  label: Text('Piano'),
-                ),
-              ],
-              selected: <String>{_selectedInstrument},
-              onSelectionChanged: (Set<String> newSelection) {
-                setState(() {
-                  _selectedInstrument = newSelection.first;
-                  _loadLessons();
-                });
-              },
-            ),
+      appBar: AppBar(
+        title: Text('Lessons',
+            style: TextStyle(color: Colors.white)), // White title
+        backgroundColor: Colors.black,
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              AppColors.darkGradientStart,
+              AppColors.darkGradientMid1,
+              AppColors.darkGradientMid2,
+              AppColors.darkGradientMid3,
+              AppColors.darkGradientEnd,
+            ],
           ),
-          Expanded(
-            child: BlocBuilder<LessonBloc, LessonState>(
-              builder: (context, state) {
-                if (state is LessonLoadingState) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (state is LessonLoadedState) {
-                  return ListView.builder(
-                    itemCount: state.lessons.length,
-                    itemBuilder: (context, index) {
-                      final lesson = state.lessons[index];
-                      bool isCompleted = completedLessons.contains(index);
-
-                      return ListTile(
-                        title: Row(
-                          children: [
-                            Text('${lesson.day}'),
-                            Spacer(), // This will push the checkmark to the right
-                            if (isCompleted)
-                              Container(
-                                padding: EdgeInsets.all(4.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.green, // Green background
-                                  shape: BoxShape.circle, // Circular shape
-                                ),
-                                child: Icon(
-                                  Icons.check,
-                                  color: Colors.white, // White checkmark
-                                  size: 16.0, // Smaller size for the checkmark
-                                ),
-                              ),
-                          ],
-                        ),
-                        onTap: () {
-                          _showLessonDetails(lesson, index);
-                        },
-                      );
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start, // Align to the start
+          children: [
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: ["Ukulele", "Guitar", "Piano"].map((category) {
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedInstrument =
+                            category.toLowerCase(); // Set selected instrument
+                      });
+                      _loadLessons();
                     },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: _selectedInstrument == category.toLowerCase()
+                              ? AppColors.darkGradientMid2
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: Text(
+                          category,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight:
+                                _selectedInstrument == category.toLowerCase()
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                            color: _selectedInstrument == category.toLowerCase()
+                                ? Colors.white
+                                : Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ),
                   );
-                } else if (state is LessonErrorState) {
-                  return Center(child: Text('Error: ${state.message}'));
-                } else {
-                  return Center(child: Text('Select Instrument'));
-                }
-              },
+                }).toList(),
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: 20),
+            Expanded(
+              child: BlocBuilder<LessonBloc, LessonState>(
+                builder: (context, state) {
+                  if (state is LessonLoadingState) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (state is LessonLoadedState) {
+                    return ListView.builder(
+                      itemCount: state.lessons.length,
+                      itemBuilder: (context, index) {
+                        final lesson = state.lessons[index];
+                        bool isCompleted = completedLessons.contains(index);
+
+                        return ListTile(
+                          title: Row(
+                            children: [
+                              Text(
+                                '${lesson.day}',
+                                style: TextStyle(
+                                    color: Colors.white), // White day text
+                              ),
+                              Spacer(),
+                              if (isCompleted)
+                                Container(
+                                  padding: EdgeInsets.all(4.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                    size: 16.0,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          onTap: () {
+                            _showLessonDetails(lesson, index);
+                          },
+                        );
+                      },
+                    );
+                  } else if (state is LessonErrorState) {
+                    return Center(child: Text('Error: ${state.message}'));
+                  } else {
+                    return Center(child: Text('Select Instrument'));
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -198,11 +241,9 @@ class _LessonViewState extends State<LessonView> {
                   ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        completedLessons
-                            .add(index); // Mark this lesson as completed.
+                        completedLessons.add(index);
                       });
-                      Navigator.pop(
-                          context); // Close the modal after submission.
+                      Navigator.pop(context);
                     },
                     child: Text('Submit'),
                   ),

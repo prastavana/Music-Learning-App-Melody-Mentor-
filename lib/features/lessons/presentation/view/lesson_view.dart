@@ -1,5 +1,3 @@
-// features/lessons/presentation/view/lesson_view.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,6 +12,7 @@ class LessonView extends StatefulWidget {
 
 class _LessonViewState extends State<LessonView> {
   String _selectedInstrument = 'ukulele';
+  Set<int> completedLessons = {}; // Store completed lesson indices.
 
   @override
   void initState() {
@@ -54,7 +53,6 @@ class _LessonViewState extends State<LessonView> {
               onSelectionChanged: (Set<String> newSelection) {
                 setState(() {
                   _selectedInstrument = newSelection.first;
-                  print('Selected Instrument: $_selectedInstrument');
                   _loadLessons();
                 });
               },
@@ -63,7 +61,6 @@ class _LessonViewState extends State<LessonView> {
           Expanded(
             child: BlocBuilder<LessonBloc, LessonState>(
               builder: (context, state) {
-                print('BlocBuilder Rebuild: $state');
                 if (state is LessonLoadingState) {
                   return Center(child: CircularProgressIndicator());
                 } else if (state is LessonLoadedState) {
@@ -71,10 +68,30 @@ class _LessonViewState extends State<LessonView> {
                     itemCount: state.lessons.length,
                     itemBuilder: (context, index) {
                       final lesson = state.lessons[index];
+                      bool isCompleted = completedLessons.contains(index);
+
                       return ListTile(
-                        title: Text('${lesson.day}'),
+                        title: Row(
+                          children: [
+                            Text('${lesson.day}'),
+                            Spacer(), // This will push the checkmark to the right
+                            if (isCompleted)
+                              Container(
+                                padding: EdgeInsets.all(4.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.green, // Green background
+                                  shape: BoxShape.circle, // Circular shape
+                                ),
+                                child: Icon(
+                                  Icons.check,
+                                  color: Colors.white, // White checkmark
+                                  size: 16.0, // Smaller size for the checkmark
+                                ),
+                              ),
+                          ],
+                        ),
                         onTap: () {
-                          _showLessonDetails(lesson);
+                          _showLessonDetails(lesson, index);
                         },
                       );
                     },
@@ -98,24 +115,25 @@ class _LessonViewState extends State<LessonView> {
     );
   }
 
-  void _showLessonDetails(lesson) {
+  void _showLessonDetails(lesson, int index) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
+        Map<int, String> selectedOptions = {};
+
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
-            Map<String, Color?> optionColors = {};
-
             return Container(
               height: MediaQuery.of(context).size.height * 0.63,
               padding: EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Day: ${lesson.day}',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text(
+                    'Day: ${lesson.day}',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                   SizedBox(height: 10),
                   Expanded(
                     child: ListView.builder(
@@ -123,6 +141,7 @@ class _LessonViewState extends State<LessonView> {
                       itemCount: lesson.quizzes.length,
                       itemBuilder: (context, index) {
                         final quiz = lesson.quizzes[index];
+
                         return Container(
                           width: MediaQuery.of(context).size.width * 0.8,
                           padding: EdgeInsets.all(16.0),
@@ -134,10 +153,11 @@ class _LessonViewState extends State<LessonView> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(quiz.question,
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500)),
+                              Text(
+                                quiz.question,
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w500),
+                              ),
                               SizedBox(height: 10),
                               if (quiz.chordDiagram != null)
                                 Image.network(
@@ -150,35 +170,23 @@ class _LessonViewState extends State<LessonView> {
                               SizedBox(height: 10),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: (quiz.options as List<dynamic>)
-                                    .map((option) {
-                                  try {
-                                    return ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            optionColors[option.toString()],
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          // Update colors for ALL options in the quiz
-                                          for (var opt in quiz.options) {
-                                            optionColors[opt.toString()] =
-                                                opt == quiz.correctAnswer
-                                                    ? (opt == option
-                                                        ? Colors.green
-                                                        : Colors.grey[300])
-                                                    : (opt == option
-                                                        ? Colors.red
-                                                        : Colors.grey[300]);
-                                          }
-                                        });
-                                      },
-                                      child: Text(option.toString()),
-                                    );
-                                  } catch (e) {
-                                    print('Error rendering option: $e');
-                                    return Text('Error');
-                                  }
+                                children: quiz.options.map<Widget>((option) {
+                                  bool isSelected =
+                                      selectedOptions[index] == option;
+
+                                  return ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: isSelected
+                                          ? Colors.blueGrey
+                                          : Colors.grey[300],
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        selectedOptions[index] = option;
+                                      });
+                                    },
+                                    child: Text(option.toString()),
+                                  );
                                 }).toList(),
                               ),
                             ],
@@ -186,6 +194,17 @@ class _LessonViewState extends State<LessonView> {
                         );
                       },
                     ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        completedLessons
+                            .add(index); // Mark this lesson as completed.
+                      });
+                      Navigator.pop(
+                          context); // Close the modal after submission.
+                    },
+                    child: Text('Submit'),
                   ),
                 ],
               ),

@@ -1,3 +1,5 @@
+// features/lessons/presentation/view_model/lesson_state.dart
+
 import '../../domain/entity/lesson_entity.dart';
 
 abstract class LessonState {}

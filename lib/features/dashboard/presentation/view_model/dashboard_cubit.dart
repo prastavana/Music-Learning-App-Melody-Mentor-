@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../app/di/di.dart';
 import '../../../auth/presentation/view/login_view.dart';
 import '../../../auth/presentation/view_model/login/login_bloc.dart';
-import '../../../chords/presentation/view/song_view.dart';
-import '../../../chords/presentation/view_model/song_bloc.dart';
 import 'dashboard_state.dart';
 
 class DashboardCubit extends Cubit<DashboardState> {
@@ -34,17 +32,5 @@ class DashboardCubit extends Cubit<DashboardState> {
         );
       }
     });
-  }
-
-  void navigateToSongView(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BlocProvider.value(
-          value: getIt<SongBloc>(), // Pass the SongBloc here
-          child: SongView(), // Navigate to SongView
-        ),
-      ),
-    );
   }
 }

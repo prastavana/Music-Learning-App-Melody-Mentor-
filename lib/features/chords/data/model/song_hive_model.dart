@@ -13,27 +13,27 @@ class SongHiveModel extends Equatable {
   final String? id;
 
   @HiveField(1)
-  final String songName;
+  final String? songName;
 
   @HiveField(2)
-  final String selectedInstrument;
+  final String? selectedInstrument;
 
   @HiveField(3)
-  final List<LyricSectionHiveModel> lyrics;
+  final List<LyricSectionHiveModel>? lyrics;
 
   @HiveField(4)
-  final List<String> chordDiagrams;
+  final List<String>? chordDiagrams;
 
   @HiveField(5)
-  final List<String> docxFiles;
+  final List<String>? docxFiles;
 
   SongHiveModel({
     String? id,
-    required this.songName,
-    required this.selectedInstrument,
-    required this.lyrics,
-    required this.chordDiagrams,
-    required this.docxFiles,
+    this.songName,
+    this.selectedInstrument,
+    this.lyrics,
+    this.chordDiagrams,
+    this.docxFiles,
   }) : id = id ?? const Uuid().v4();
 
   const SongHiveModel.initial()
@@ -62,11 +62,11 @@ class SongHiveModel extends Equatable {
   SongEntity toEntity() {
     return SongEntity(
       id: id,
-      songName: songName,
-      selectedInstrument: selectedInstrument,
-      lyrics: lyrics.map((e) => e.toEntity()).toList(),
-      chordDiagrams: chordDiagrams,
-      docxFiles: docxFiles,
+      songName: songName ?? "",
+      selectedInstrument: selectedInstrument ?? "",
+      lyrics: lyrics?.map((e) => e.toEntity()).toList() ?? [],
+      chordDiagrams: chordDiagrams ?? [],
+      docxFiles: docxFiles ?? [],
     );
   }
 
@@ -78,18 +78,18 @@ class SongHiveModel extends Equatable {
 @HiveType(typeId: HiveTableConstant.lyricSectionTableId)
 class LyricSectionHiveModel extends Equatable {
   @HiveField(0)
-  final String section;
+  final String? section;
 
   @HiveField(1)
-  final String lyrics;
+  final String? lyrics;
 
   @HiveField(2)
-  final List<String> parsedDocxFile;
+  final List<String>? parsedDocxFile;
 
   LyricSectionHiveModel({
-    required this.section,
-    required this.lyrics,
-    required this.parsedDocxFile,
+    this.section,
+    this.lyrics,
+    this.parsedDocxFile,
   });
 
   // From Entity
@@ -104,9 +104,9 @@ class LyricSectionHiveModel extends Equatable {
   // To Entity
   LyricSection toEntity() {
     return LyricSection(
-      section: section,
-      lyrics: lyrics,
-      parsedDocxFile: parsedDocxFile,
+      section: section ?? "",
+      lyrics: lyrics ?? "",
+      parsedDocxFile: parsedDocxFile ?? [],
     );
   }
 

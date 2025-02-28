@@ -9,19 +9,19 @@ part 'song_api_model.g.dart';
 class SongApiModel extends Equatable {
   @JsonKey(name: '_id')
   final String? id;
-  final String songName;
-  final String selectedInstrument;
-  final List<LyricSectionApiModel> lyrics;
-  final List<String> chordDiagrams;
-  final List<String> docxFiles;
+  final String? songName;
+  final String? selectedInstrument;
+  final List<LyricSectionApiModel>? lyrics;
+  final List<String>? chordDiagrams;
+  final List<String>? docxFiles;
 
   const SongApiModel({
     this.id,
-    required this.songName,
-    required this.selectedInstrument,
-    required this.lyrics,
-    required this.chordDiagrams,
-    required this.docxFiles,
+    this.songName,
+    this.selectedInstrument,
+    this.lyrics,
+    this.chordDiagrams,
+    this.docxFiles,
   });
 
   factory SongApiModel.fromJson(Map<String, dynamic> json) =>
@@ -33,11 +33,11 @@ class SongApiModel extends Equatable {
   SongEntity toEntity() {
     return SongEntity(
       id: id,
-      songName: songName,
-      selectedInstrument: selectedInstrument,
-      lyrics: lyrics.map((e) => e.toEntity()).toList(),
-      chordDiagrams: chordDiagrams,
-      docxFiles: docxFiles,
+      songName: songName ?? "",
+      selectedInstrument: selectedInstrument ?? "",
+      lyrics: lyrics?.map((e) => e.toEntity()).toList() ?? [],
+      chordDiagrams: chordDiagrams ?? [],
+      docxFiles: docxFiles ?? [],
     );
   }
 
@@ -61,14 +61,14 @@ class SongApiModel extends Equatable {
 
 @JsonSerializable()
 class LyricSectionApiModel extends Equatable {
-  final String section;
-  final String lyrics;
-  final List<String> parsedDocxFile;
+  final String? section;
+  final String? lyrics;
+  final List<String>? parsedDocxFile;
 
   const LyricSectionApiModel({
-    required this.section,
-    required this.lyrics,
-    required this.parsedDocxFile,
+    this.section,
+    this.lyrics,
+    this.parsedDocxFile,
   });
 
   factory LyricSectionApiModel.fromJson(Map<String, dynamic> json) =>
@@ -79,9 +79,9 @@ class LyricSectionApiModel extends Equatable {
   // Convert to Entity
   LyricSection toEntity() {
     return LyricSection(
-      section: section,
-      lyrics: lyrics,
-      parsedDocxFile: parsedDocxFile,
+      section: section ?? "",
+      lyrics: lyrics ?? "",
+      parsedDocxFile: parsedDocxFile ?? [],
     );
   }
 

@@ -17,7 +17,7 @@ class FetchAllSongs extends SongEvent {
 }
 
 class FetchSongById extends SongEvent {
-  final int id;
+  final String id; // Corrected: ID is now a String
 
   const FetchSongById({required this.id});
 

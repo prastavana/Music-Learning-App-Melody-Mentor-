@@ -28,21 +28,23 @@ class SongEntity extends Equatable {
   // ✅ Convert JSON to SongEntity
   factory SongEntity.fromJson(Map<String, dynamic> json) {
     return SongEntity(
-      id: json['id'],
-      songName: json['songName'],
-      selectedInstrument: json['selectedInstrument'],
-      lyrics: (json['lyrics'] as List<dynamic>)
-          .map((e) => LyricSection.fromJson(e))
-          .toList(),
-      chordDiagrams: List<String>.from(json['chordDiagrams']),
-      docxFiles: List<String>.from(json['docxFiles']),
+      id: json['_id'], // Corrected: Using '_id' from API
+      songName: json['songName'] ?? "", // Added null check
+      selectedInstrument: json['selectedInstrument'] ?? "", // Added null check
+      lyrics: (json['lyrics'] as List<dynamic>?) // Added null check
+              ?.map((e) => LyricSection.fromJson(e))
+              .toList() ??
+          [],
+      chordDiagrams:
+          List<String>.from(json['chordDiagrams'] ?? []), // Added null check
+      docxFiles: List<String>.from(json['docxFiles'] ?? []), // Added null check
     );
   }
 
   // ✅ Convert SongEntity to JSON
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      '_id': id, // Corrected: Using '_id'
       'songName': songName,
       'selectedInstrument': selectedInstrument,
       'lyrics': lyrics.map((e) => e.toJson()).toList(),
@@ -58,7 +60,7 @@ class SongEntity extends Equatable {
 
 class LyricSection extends Equatable {
   final String section;
-  final String lyrics;
+  final String? lyrics;
   final List<String> parsedDocxFile;
 
   const LyricSection({
@@ -70,9 +72,10 @@ class LyricSection extends Equatable {
   // ✅ Convert JSON to LyricSection
   factory LyricSection.fromJson(Map<String, dynamic> json) {
     return LyricSection(
-      section: json['section'],
+      section: json['section'] ?? "", // Added null check
       lyrics: json['lyrics'],
-      parsedDocxFile: List<String>.from(json['parsedDocxFile']),
+      parsedDocxFile:
+          List<String>.from(json['parsedDocxFile'] ?? []), // Added null check
     );
   }
 

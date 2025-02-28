@@ -18,11 +18,11 @@ class SongHiveModelAdapter extends TypeAdapter<SongHiveModel> {
     };
     return SongHiveModel(
       id: fields[0] as String?,
-      songName: fields[1] as String,
-      selectedInstrument: fields[2] as String,
-      lyrics: (fields[3] as List).cast<LyricSectionHiveModel>(),
-      chordDiagrams: (fields[4] as List).cast<String>(),
-      docxFiles: (fields[5] as List).cast<String>(),
+      songName: fields[1] as String?,
+      selectedInstrument: fields[2] as String?,
+      lyrics: (fields[3] as List?)?.cast<LyricSectionHiveModel>(),
+      chordDiagrams: (fields[4] as List?)?.cast<String>(),
+      docxFiles: (fields[5] as List?)?.cast<String>(),
     );
   }
 
@@ -66,9 +66,9 @@ class LyricSectionHiveModelAdapter extends TypeAdapter<LyricSectionHiveModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return LyricSectionHiveModel(
-      section: fields[0] as String,
-      lyrics: fields[1] as String,
-      parsedDocxFile: (fields[2] as List).cast<String>(),
+      section: fields[0] as String?,
+      lyrics: fields[1] as String?,
+      parsedDocxFile: (fields[2] as List?)?.cast<String>(),
     );
   }
 

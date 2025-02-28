@@ -1,3 +1,5 @@
+// features/lessons/presentation/view_model/lesson_bloc.dart
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/use_case/get_lesson_usecase.dart';
@@ -10,15 +12,13 @@ class LessonBloc extends Bloc<LessonEvent, LessonState> {
   LessonBloc({required this.getLessonsUseCase}) : super(LessonInitialState()) {
     on<LoadLessonsEvent>((event, emit) async {
       emit(LessonLoadingState());
-      final result = await getLessonsUseCase.call(); // Call the use case
+      final result = await getLessonsUseCase.call(event.instrument);
 
       result.fold(
         (failure) {
-          // Handle failure
           emit(LessonErrorState(message: failure.message));
         },
         (lessons) {
-          // Handle success
           emit(LessonLoadedState(lessons: lessons));
         },
       );

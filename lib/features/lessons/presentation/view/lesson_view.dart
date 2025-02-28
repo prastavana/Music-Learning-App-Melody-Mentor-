@@ -13,7 +13,7 @@ class LessonView extends StatefulWidget {
 }
 
 class _LessonViewState extends State<LessonView> {
-  String _selectedInstrument = 'Ukulele'; // Default instrument
+  String _selectedInstrument = 'ukulele';
 
   @override
   void initState() {
@@ -38,15 +38,15 @@ class _LessonViewState extends State<LessonView> {
             child: SegmentedButton<String>(
               segments: const <ButtonSegment<String>>[
                 ButtonSegment<String>(
-                  value: 'Ukulele',
+                  value: 'ukulele',
                   label: Text('Ukulele'),
                 ),
                 ButtonSegment<String>(
-                  value: 'Guitar',
+                  value: 'guitar',
                   label: Text('Guitar'),
                 ),
                 ButtonSegment<String>(
-                  value: 'Piano',
+                  value: 'piano',
                   label: Text('Piano'),
                 ),
               ],
@@ -54,6 +54,7 @@ class _LessonViewState extends State<LessonView> {
               onSelectionChanged: (Set<String> newSelection) {
                 setState(() {
                   _selectedInstrument = newSelection.first;
+                  print('Selected Instrument: $_selectedInstrument');
                   _loadLessons();
                 });
               },
@@ -62,22 +63,18 @@ class _LessonViewState extends State<LessonView> {
           Expanded(
             child: BlocBuilder<LessonBloc, LessonState>(
               builder: (context, state) {
+                print('BlocBuilder Rebuild: $state');
                 if (state is LessonLoadingState) {
                   return Center(child: CircularProgressIndicator());
                 } else if (state is LessonLoadedState) {
-                  final filteredLessons = state.lessons
-                      .where(
-                          (lesson) => lesson.instrument == _selectedInstrument)
-                      .toList();
-
                   return ListView.builder(
-                    itemCount: filteredLessons.length,
+                    itemCount: state.lessons.length,
                     itemBuilder: (context, index) {
-                      final lesson = filteredLessons[index];
+                      final lesson = state.lessons[index];
                       return ListTile(
-                        title: Text('Day: ${lesson.day}'), // Display only day
+                        title: Text('${lesson.day}'),
                         onTap: () {
-                          _showLessonDetails(lesson); // Show details on tap
+                          _showLessonDetails(lesson);
                         },
                       );
                     },
@@ -104,37 +101,96 @@ class _LessonViewState extends State<LessonView> {
   void _showLessonDetails(lesson) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (BuildContext context) {
-        return Container(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Day: ${lesson.day}',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: lesson.quizzes.length,
-                  itemBuilder: (context, index) {
-                    final quiz = lesson.quizzes[index];
-                    return ListTile(
-                      title: Text(quiz.question),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Options: ${quiz.options.join(', ')}'),
-                          Text('Correct Answer: ${quiz.correctAnswer}'),
-                          if (quiz.chordDiagram != null)
-                            Text('Chord Diagram: ${quiz.chordDiagram}'),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            Map<String, Color?> optionColors = {};
+
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.63,
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Day: ${lesson.day}',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 10),
+                  Expanded(
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: lesson.quizzes.length,
+                      itemBuilder: (context, index) {
+                        final quiz = lesson.quizzes[index];
+                        return Container(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          padding: EdgeInsets.all(16.0),
+                          margin: EdgeInsets.symmetric(horizontal: 8.0),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(quiz.question,
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500)),
+                              SizedBox(height: 10),
+                              if (quiz.chordDiagram != null)
+                                Image.network(
+                                  'http://10.0.2.2:3000/uploads/${quiz.chordDiagram}',
+                                  height: 100,
+                                  width: 100,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Text('Failed to load image'),
+                                ),
+                              SizedBox(height: 10),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: (quiz.options as List<dynamic>)
+                                    .map((option) {
+                                  try {
+                                    return ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            optionColors[option.toString()],
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          // Update colors for ALL options in the quiz
+                                          for (var opt in quiz.options) {
+                                            optionColors[opt.toString()] =
+                                                opt == quiz.correctAnswer
+                                                    ? (opt == option
+                                                        ? Colors.green
+                                                        : Colors.grey[300])
+                                                    : (opt == option
+                                                        ? Colors.red
+                                                        : Colors.grey[300]);
+                                          }
+                                        });
+                                      },
+                                      child: Text(option.toString()),
+                                    );
+                                  } catch (e) {
+                                    print('Error rendering option: $e');
+                                    return Text('Error');
+                                  }
+                                }).toList(),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );

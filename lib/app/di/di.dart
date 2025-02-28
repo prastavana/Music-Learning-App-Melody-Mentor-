@@ -22,6 +22,10 @@ import '../../features/chords/data/repository/song_local_repository.dart';
 import '../../features/chords/data/repository/song_remote_repository.dart';
 import '../../features/chords/domain/use_case/song_usecase.dart';
 import '../../features/chords/presentation/view_model/song_bloc.dart';
+import '../../features/lessons/data/data_source/lesson_data_source.dart';
+import '../../features/lessons/data/data_source/lesson_remote_data_source/lesson_remote_datasource.dart';
+import '../../features/lessons/domain/use_case/get_lesson_usecase.dart';
+import '../../features/lessons/presentation/view_model/lesson_bloc.dart';
 import '../../features/onboarding/presentation/view_model/onboarding_cubit.dart';
 import '../shared_prefs/token_shared_prefs.dart';
 
@@ -32,6 +36,7 @@ Future<void> initDependencies() async {
   await _initHiveService();
   await _initApiService();
   await _initSongDependencies();
+  await _initLessonDependencies();
   await _initDashboardDependencies();
   await _initRegisterDependencies();
   await _initLoginDependencies();

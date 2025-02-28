@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:music_learning_app/features/chords/presentation/view/song_view.dart';
+import 'package:music_learning_app/features/lessons/presentation/view/lesson_view.dart';
+import 'package:music_learning_app/features/lessons/presentation/view_model/lesson_bloc.dart';
 import 'package:provider/provider.dart';
 
 import '../core/theme/theme_cubit.dart';
@@ -29,9 +30,13 @@ class App extends StatelessWidget {
             create: (_) =>
                 getIt<SongBloc>(), // Ensure SongBloc is provided here
           ),
+          BlocProvider(
+            create: (_) =>
+                getIt<LessonBloc>(), // Ensure SongBloc is provided here
+          ),
           BlocProvider(create: (_) => getIt<ThemeCubit>()),
         ],
-        child: SongView(), // Ensure DashboardView is a descendant
+        child: LessonView(), // Ensure DashboardView is a descendant
       ),
     );
   }

@@ -1,61 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../view_model/lesson_bloc.dart';
+import '../view_model/lesson_event.dart';
+import '../view_model/lesson_state.dart';
 
 class LessonView extends StatelessWidget {
-  const LessonView({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background Image
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/background.jpg', // Ensure this path is correct
-              fit: BoxFit.cover,
-            ),
-          ),
-          // UI Content
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Back button and Lessons text at the top
-                Padding(
-                  padding:
-                      const EdgeInsets.only(top: 50.0), // Space from the top
-                  child: Row(
-                    children: [
-                      // Back Button
-                      IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colors.white),
-                        onPressed: () {
-                          // Navigate back to DashboardView
-                          Navigator.of(context).pop();
-                        },
+      appBar: AppBar(title: Text('Lessons')),
+      body: BlocBuilder<LessonBloc, LessonState>(
+        builder: (context, state) {
+          if (state is LessonLoadingState) {
+            return Center(child: CircularProgressIndicator());
+          } else if (state is LessonLoadedState) {
+            return ListView.builder(
+              itemCount: state.lessons.length,
+              itemBuilder: (context, index) {
+                final lesson = state.lessons[index];
+                return ExpansionTile(
+                  title: Text(
+                      'Day: ${lesson.day}, Instrument: ${lesson.instrument}'),
+                  children: lesson.quizzes.map((quiz) {
+                    return ListTile(
+                      title: Text(quiz.question),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Options: ${quiz.options.join(', ')}'),
+                          Text('Correct Answer: ${quiz.correctAnswer}'),
+                          if (quiz.chordDiagram != null)
+                            Text('Chord Diagram: ${quiz.chordDiagram}'),
+                        ],
                       ),
-                      // Lessons text
-                      Text(
-                        'Lessons',
-                        style: GoogleFonts.montserrat(
-                          fontWeight: FontWeight.w800,
-                          fontSize: 36,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Space before other content
-                const SizedBox(height: 20),
-                // Placeholder for content
-                const Placeholder(),
-              ],
-            ),
-          ),
-        ],
+                    );
+                  }).toList(),
+                );
+              },
+            );
+          } else if (state is LessonErrorState) {
+            return Center(child: Text('Error: ${state.message}'));
+          } else {
+            return Center(child: Text('Load Lessons'));
+          }
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          context.read<LessonBloc>().add(LoadLessonsEvent());
+        },
+        child: Icon(Icons.refresh),
       ),
     );
   }

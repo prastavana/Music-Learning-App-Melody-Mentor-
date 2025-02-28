@@ -21,4 +21,7 @@ class ApiEndpoints {
   static const String getAllSongs =
       "songs/getsongs"; // Route for fetching all songs
   static const String getSongById = "songs/"; // Route for fetching a song by ID
+
+  //=====================Lesson Routes ==========================
+  static const String getAllLessons = "quiz/getquiz";
 }

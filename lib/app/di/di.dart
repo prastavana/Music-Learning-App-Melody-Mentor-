@@ -28,6 +28,11 @@ import '../../features/lessons/data/repository/lesson_remote_repository.dart';
 import '../../features/lessons/domain/use_case/get_lesson_usecase.dart';
 import '../../features/lessons/presentation/view_model/lesson_bloc.dart';
 import '../../features/onboarding/presentation/view_model/onboarding_cubit.dart';
+import '../../features/session/data/data_source/session_data_source.dart';
+import '../../features/session/data/data_source/session_remote_data_source.dart';
+import '../../features/session/data/repository/session_remote_repository.dart';
+import '../../features/session/domain/use_case/get_session_usecase.dart';
+import '../../features/session/presentation/view_model/session_bloc.dart';
 import '../shared_prefs/token_shared_prefs.dart';
 
 final getIt = GetIt.instance;
@@ -38,6 +43,7 @@ Future<void> initDependencies() async {
   await _initApiService();
   await _initSongDependencies();
   await _initLessonDependencies();
+  await _initSessionDependencies();
   await _initDashboardDependencies();
   await _initRegisterDependencies();
   await _initLoginDependencies();
@@ -204,4 +210,14 @@ _initLessonDependencies() {
       () => GetLessonsUseCase(repository: getIt<LessonRemoteRepository>()));
 
   getIt.registerFactory(() => LessonBloc(getLessonsUseCase: getIt()));
+}
+
+void _initSessionDependencies() {
+  getIt.registerLazySingleton<ISessionDataSource>(
+      () => SessionRemoteDataSource(dio: getIt<Dio>()));
+  getIt.registerLazySingleton(() => SessionRemoteRepository(
+      remoteDataSource: getIt<ISessionDataSource>())); // Corrected line
+  getIt.registerLazySingleton(
+      () => GetSessionsUseCase(repository: getIt<SessionRemoteRepository>()));
+  getIt.registerFactory(() => SessionBloc(getSessions: getIt()));
 }

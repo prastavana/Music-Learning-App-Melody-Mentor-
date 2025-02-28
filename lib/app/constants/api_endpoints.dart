@@ -24,4 +24,7 @@ class ApiEndpoints {
 
   //=====================Lesson Routes ==========================
   static const String getAllLessons = "quiz/getquiz";
+
+  //====================Session Routes===================
+  static const String sessions = 'sessions/';
 }

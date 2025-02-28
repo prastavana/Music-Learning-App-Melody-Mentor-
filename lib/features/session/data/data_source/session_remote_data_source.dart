@@ -1,33 +1,35 @@
-// lib/features/sessions/data/datasource/remote_datasource.dart
+// lib/features/session/data/datasource/remote_datasource.dart
 
-import 'dart:convert';
+import 'package:dio/dio.dart';
 
-import 'package:http/http.dart' as http;
-
+import '../../../../app/constants/api_endpoints.dart';
 import '../model/session_api_model.dart';
+import 'session_data_source.dart'; // Import ISessionDataSource
 
-abstract class SessionRemoteDataSource {
-  Future<List<ApiSessionModel>> getAllSessions();
-}
+class SessionRemoteDataSource implements ISessionDataSource {
+  // Implement ISessionDataSource
+  final Dio dio;
 
-class SessionRemoteDataSourceImpl implements SessionRemoteDataSource {
-  final http.Client client;
-
-  SessionRemoteDataSourceImpl({required this.client});
+  SessionRemoteDataSource({required this.dio});
 
   @override
   Future<List<ApiSessionModel>> getAllSessions() async {
-    final response = await client.get(
-      Uri.parse('http://YOUR_IP:3000/sessions'), // Replace with your API URL
-    );
+    try {
+      final response =
+          await dio.get('${ApiEndpoints.baseUrl}${ApiEndpoints.sessions}');
 
-    if (response.statusCode == 200) {
-      final List<dynamic> sessionsJson = json.decode(response.body);
-      return sessionsJson
-          .map((json) => ApiSessionModel.fromJson(json))
-          .toList();
-    } else {
-      throw Exception('Failed to load sessions');
+      if (response.statusCode == 200) {
+        final List<dynamic> sessionsJson = response.data;
+        return sessionsJson
+            .map((json) => ApiSessionModel.fromJson(json))
+            .toList();
+      } else {
+        throw Exception('Failed to load sessions: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      throw Exception('Failed to load sessions: ${e.message}');
+    } catch (e) {
+      throw Exception('Failed to load sessions: ${e.toString()}');
     }
   }
 }

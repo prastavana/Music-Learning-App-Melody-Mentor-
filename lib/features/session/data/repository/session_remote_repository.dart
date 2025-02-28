@@ -22,7 +22,7 @@ class SessionRemoteRepository implements ISessionRepository {
       if (instrument != null) {
         filteredSessions = sessions
             .where((session) =>
-                session.instrument.toLowerCase() == instrument.toLowerCase())
+                session.instrument.toLowerCase() == instrument!.toLowerCase())
             .toList();
       }
       return Right(filteredSessions.map((model) => model.toEntity()).toList());
@@ -35,7 +35,7 @@ class SessionRemoteRepository implements ISessionRepository {
 extension ApiSessionModelToEntity on ApiSessionModel {
   SessionEntity toEntity() {
     return SessionEntity(
-      id: id,
+      id: this.id,
       instrument: instrument,
       day: day,
       title: title,

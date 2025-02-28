@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:music_learning_app/features/lessons/presentation/view/lesson_view.dart';
 import 'package:music_learning_app/features/lessons/presentation/view_model/lesson_bloc.dart';
+import 'package:music_learning_app/features/session/presentation/view/session_view.dart';
+import 'package:music_learning_app/features/session/presentation/view_model/session_bloc.dart';
 import 'package:provider/provider.dart';
 
 import '../core/theme/theme_cubit.dart';
@@ -32,9 +33,12 @@ class App extends StatelessWidget {
           BlocProvider(
             create: (_) => getIt<LessonBloc>(),
           ),
+          BlocProvider(
+            create: (_) => getIt<SessionBloc>(),
+          ),
           BlocProvider(create: (_) => getIt<ThemeCubit>()),
         ],
-        child: LessonView(),
+        child: SessionView(),
       ),
     );
   }

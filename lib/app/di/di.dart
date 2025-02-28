@@ -24,6 +24,7 @@ import '../../features/chords/domain/use_case/song_usecase.dart';
 import '../../features/chords/presentation/view_model/song_bloc.dart';
 import '../../features/lessons/data/data_source/lesson_data_source.dart';
 import '../../features/lessons/data/data_source/lesson_remote_data_source/lesson_remote_datasource.dart';
+import '../../features/lessons/data/repository/lesson_remote_repository.dart';
 import '../../features/lessons/domain/use_case/get_lesson_usecase.dart';
 import '../../features/lessons/presentation/view_model/lesson_bloc.dart';
 import '../../features/onboarding/presentation/view_model/onboarding_cubit.dart';
@@ -186,4 +187,21 @@ _initThemeCubit() {
   getIt.registerLazySingleton<ThemeCubit>(
     () => ThemeCubit(),
   );
+}
+
+_initLessonDependencies() {
+  getIt.registerLazySingleton<ILessonDataSource>(
+    () => LessonRemoteDataSource(getIt<Dio>()),
+  );
+
+  getIt.registerLazySingleton<LessonRemoteRepository>(
+    () => LessonRemoteRepository(
+      remoteDataSource: getIt<ILessonDataSource>(),
+    ),
+  );
+
+  getIt.registerLazySingleton(
+      () => GetLessonsUseCase(repository: getIt<LessonRemoteRepository>()));
+
+  getIt.registerFactory(() => LessonBloc(getLessonsUseCase: getIt()));
 }

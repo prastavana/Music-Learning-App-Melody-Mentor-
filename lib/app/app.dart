@@ -27,16 +27,14 @@ class App extends StatelessWidget {
             create: (_) => getIt<DashboardCubit>(),
           ),
           BlocProvider(
-            create: (_) =>
-                getIt<SongBloc>(), // Ensure SongBloc is provided here
+            create: (_) => getIt<SongBloc>(),
           ),
           BlocProvider(
-            create: (_) =>
-                getIt<LessonBloc>(), // Ensure SongBloc is provided here
+            create: (_) => getIt<LessonBloc>(),
           ),
           BlocProvider(create: (_) => getIt<ThemeCubit>()),
         ],
-        child: LessonView(), // Ensure DashboardView is a descendant
+        child: LessonView(),
       ),
     );
   }

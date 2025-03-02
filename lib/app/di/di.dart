@@ -10,10 +10,12 @@ import '../../core/theme/theme_cubit.dart';
 import '../../features/auth/data/data_source/auth_local_data_souce/auth_local_data_source.dart';
 import '../../features/auth/data/data_source/auth_remote_data_source/auth_remote_data_source.dart';
 import '../../features/auth/data/repository/auth_local_repository/auth_local_repository.dart';
+import '../../features/auth/domain/use_case/get_profile_usecase.dart';
 import '../../features/auth/domain/use_case/login_usecase.dart';
 import '../../features/auth/domain/use_case/register_user_usecase.dart';
 import '../../features/auth/domain/use_case/upload_image_usecase.dart';
 import '../../features/auth/presentation/view_model/login/login_bloc.dart';
+import '../../features/auth/presentation/view_model/profile/profile_bloc.dart';
 import '../../features/auth/presentation/view_model/signup/register_bloc.dart';
 import '../../features/chords/data/data_source/song_data_source.dart';
 import '../../features/chords/data/data_source/song_local_data_source/song_local_data_source.dart';
@@ -133,6 +135,11 @@ _initLoginDependencies() async {
       getIt<TokenSharedPrefs>(),
     ),
   );
+  // Register GetProfileUseCase
+  getIt.registerLazySingleton<GetProfileUseCase>(
+    () => GetProfileUseCase(
+        getIt<AuthRemoteRepository>()), // Register GetProfileUseCase
+  );
 
   getIt.registerFactory<LoginBloc>(
     () => LoginBloc(
@@ -140,6 +147,10 @@ _initLoginDependencies() async {
       dashboardCubit: getIt<DashboardCubit>(),
       loginUseCase: getIt<LoginUseCase>(),
     ),
+  );
+
+  getIt.registerFactory<ProfileBloc>(
+    () => ProfileBloc(getIt<GetProfileUseCase>()),
   );
 }
 

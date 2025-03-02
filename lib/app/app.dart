@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:music_learning_app/core/theme/app_theme.dart';
-import 'package:music_learning_app/features/onboarding/presentation/view/onboarding_view.dart';
+import 'package:music_learning_app/features/auth/presentation/view/profile_view.dart';
 import 'package:provider/provider.dart';
 
 import '../core/theme/theme_cubit.dart';
@@ -45,7 +45,7 @@ class App extends StatelessWidget {
             themeMode: themeData.brightness == Brightness.dark
                 ? ThemeMode.dark
                 : ThemeMode.light,
-            home: const OnboardingView(),
+            home: const ProfileView(),
           );
         },
       ),

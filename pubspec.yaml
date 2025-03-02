@@ -34,10 +34,8 @@ dependencies:
   test_cov_console: ^0.2.2
   webview_flutter: ^4.4.2
   youtube_player_flutter: ^8.1.2
-
-
-
-
+  fftea: ^1.5.0+1
+  flutter_sound: ^9.2.13
 
 
 

@@ -33,6 +33,13 @@ import '../../features/session/data/data_source/session_remote_data_source.dart'
 import '../../features/session/data/repository/session_remote_repository.dart';
 import '../../features/session/domain/use_case/get_session_usecase.dart';
 import '../../features/session/presentation/view_model/session_bloc.dart';
+import '../../features/tuner/data/data_source/tuner_local_data_source.dart';
+import '../../features/tuner/data/repository/tuner_repository_impl.dart';
+import '../../features/tuner/domain/use_case/analyze_frequency_usecase.dart';
+import '../../features/tuner/domain/use_case/get_closest_note_usecase.dart';
+import '../../features/tuner/domain/use_case/start_recording_usecase.dart';
+import '../../features/tuner/domain/use_case/stop_recording_usecase.dart';
+import '../../features/tuner/presentation/view_model/tuner_bloc.dart';
 import '../shared_prefs/token_shared_prefs.dart';
 
 final getIt = GetIt.instance;
@@ -49,6 +56,7 @@ Future<void> initDependencies() async {
   await _initLoginDependencies();
   await _initSharedPreferences();
   await _initThemeCubit();
+  await _initTunerDependencies(); // Add this line
 }
 
 Future<void> _initSharedPreferences() async {
@@ -225,4 +233,27 @@ _initSessionDependencies() {
     () => GetSessionsUseCase(repository: getIt<SessionRemoteRepository>()),
   );
   getIt.registerFactory(() => SessionBloc(getSessions: getIt()));
+}
+
+_initTunerDependencies() {
+  getIt.registerLazySingleton<TunerLocalDataSource>(
+      () => TunerLocalDataSource());
+  getIt.registerLazySingleton<TunerRepositoryImpl>(
+      () => TunerRepositoryImpl(getIt<TunerLocalDataSource>()));
+
+  getIt.registerLazySingleton(
+      () => StartRecordingUseCase(getIt<TunerRepositoryImpl>()));
+  getIt.registerLazySingleton(
+      () => StopRecordingUseCase(getIt<TunerRepositoryImpl>()));
+  getIt.registerLazySingleton(
+      () => AnalyzeFrequencyUseCase(getIt<TunerRepositoryImpl>()));
+  getIt.registerLazySingleton(
+      () => GetClosestNoteUseCase(getIt<TunerRepositoryImpl>()));
+
+  getIt.registerFactory(() => TunerBloc(
+        startRecordingUseCase: getIt(),
+        stopRecordingUseCase: getIt(),
+        analyzeFrequencyUseCase: getIt(),
+        getClosestNoteUseCase: getIt(),
+      ));
 }

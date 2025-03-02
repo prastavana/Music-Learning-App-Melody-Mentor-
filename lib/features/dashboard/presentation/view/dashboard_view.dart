@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:music_learning_app/features/chords/presentation/view/song_view.dart';
+import 'package:music_learning_app/features/lessons/presentation/view_model/lesson_bloc.dart';
+import 'package:music_learning_app/features/tuner/presentation/view_model/tuner_bloc.dart';
 
-import '../../../chords/presentation/view/song_view.dart';
 import '../../../chords/presentation/view_model/song_bloc.dart';
+import '../../../lessons/presentation/view/lesson_view.dart';
+import '../../../tuner/presentation/view/tuner_view.dart';
 import '../view_model/dashboard_cubit.dart';
 import '../view_model/dashboard_state.dart';
 
@@ -18,18 +22,18 @@ class DashboardView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black, // Set AppBar to black
+        backgroundColor: Colors.black,
         title: Text(
           'Melody Mentor',
           style: GoogleFonts.kanit(
             fontSize: 24,
             fontWeight: FontWeight.w800,
-            color: Colors.white, // White text for the title
+            color: Colors.white,
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white), // White icon
+            icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: () {
               context.read<DashboardCubit>().logout(context);
             },
@@ -46,11 +50,11 @@ class DashboardView extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black, // Black at the top
-                  Color(0xFF1F0B6F), // Intermediate dark purple
-                  Color(0xFF3C19AA), // Purple
-                  Color(0xFF6929CF), // Light purple
-                  Color(0xFFB964E9), // Lighter purple
+                  Colors.black,
+                  Color(0xFF1F0B6F),
+                  Color(0xFF3C19AA),
+                  Color(0xFF6929CF),
+                  Color(0xFFB964E9),
                 ],
                 stops: [0.35, 0.65, 0.75, 0.85, 1.0],
               ),
@@ -58,7 +62,6 @@ class DashboardView extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  // Welcome message
                   Padding(
                     padding: EdgeInsets.only(
                       top: isPortrait
@@ -99,79 +102,104 @@ class DashboardView extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // Explore card
-                  Padding(
-                    padding: EdgeInsets.only(
-                      top: isPortrait
-                          ? screenHeight * 0.04
-                          : screenHeight * 0.04,
-                      left: 20,
-                      right: 20,
-                    ),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40),
+                  GestureDetector(
+                    onTap: () {
+                      try {
+                        final songBloc = context.read<SongBloc>();
+                        print(
+                            "SongBloc instance found in DashboardView: $songBloc");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BlocProvider.value(
+                              value: songBloc,
+                              child: SongView(),
+                            ),
+                          ),
+                        );
+                      } catch (e) {
+                        print("SongBloc not found in DashboardView: $e");
+                      }
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        top: isPortrait
+                            ? screenHeight * 0.04
+                            : screenHeight * 0.04,
+                        left: 20,
+                        right: 20,
                       ),
-                      elevation: 5,
-                      color: Colors.white.withOpacity(0.5),
-                      child: Row(
-                        children: [
-                          const Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Explore your music learning journey!',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        elevation: 5,
+                        color: Colors.white.withOpacity(0.5),
+                        child: Row(
+                          children: [
+                            const Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Explore your music learning journey!',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(height: 10),
-                                  Text(
-                                    'GET STARTED',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.white,
+                                    SizedBox(height: 10),
+                                    Text(
+                                      'GET STARTED',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                          ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                              topRight: Radius.circular(40),
-                              bottomRight: Radius.circular(40),
-                            ),
-                            child: SizedBox(
-                              width: isPortrait ? 180 : screenWidth * 0.3,
-                              height: 130,
-                              child: Image.asset(
-                                'assets/images/guitar1.jpg',
-                                fit: BoxFit.cover,
+                            ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topRight: Radius.circular(40),
+                                bottomRight: Radius.circular(40),
+                              ),
+                              child: SizedBox(
+                                width: isPortrait ? 180 : screenWidth * 0.3,
+                                height: 130,
+                                child: Image.asset(
+                                  'assets/images/guitar1.jpg',
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  // Two side-by-side cards (play-along and take the pick)
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BlocProvider.value(
-                            value: context.read<SongBloc>(),
-                            child: SongView(),
+                      try {
+                        final lessonBloc = context.read<LessonBloc>();
+                        print(
+                            "LessonBloc instance found in DashboardView: $lessonBloc");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BlocProvider.value(
+                              value: lessonBloc,
+                              child: LessonView(),
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      } catch (e) {
+                        print("SongBloc not found in DashboardView: $e");
+                      }
                     },
                     child: Padding(
                       padding: EdgeInsets.only(
@@ -240,55 +268,76 @@ class DashboardView extends StatelessWidget {
                           ),
                           if (!isPortrait) const SizedBox(width: 20),
                           Expanded(
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              elevation: 5,
-                              color: Colors.white.withOpacity(0.5),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: SizedBox(
-                                  height: 170,
-                                  child: Stack(
-                                    children: [
-                                      Image.asset(
-                                        'assets/images/pick.jpg',
-                                        width: isPortrait
-                                            ? 180
-                                            : screenWidth * 0.70,
-                                        height: isPortrait
-                                            ? 170
-                                            : screenWidth * 0.20,
-                                        fit: BoxFit.cover,
+                            child: GestureDetector(
+                              onTap: () {
+                                try {
+                                  final tunerBloc = context.read<TunerBloc>();
+                                  print(
+                                      "TunerBloc instance found in TunerView: $tunerBloc");
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => BlocProvider.value(
+                                        value: tunerBloc,
+                                        child: TunerView(),
                                       ),
-                                      const Positioned(
-                                        bottom: 10,
-                                        right: 10,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              'Tune your ',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            Text(
-                                              'Instrument Easily ',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ],
+                                    ),
+                                  );
+                                } catch (e) {
+                                  print(
+                                      "SongBloc not found in DashboardView: $e");
+                                }
+                              },
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                elevation: 5,
+                                color: Colors.white.withOpacity(0.5),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: SizedBox(
+                                    height: 170,
+                                    child: Stack(
+                                      children: [
+                                        Image.asset(
+                                          'assets/images/pick.jpg',
+                                          width: isPortrait
+                                              ? 180
+                                              : screenWidth * 0.70,
+                                          height: isPortrait
+                                              ? 170
+                                              : screenWidth * 0.20,
+                                          fit: BoxFit.cover,
                                         ),
-                                      ),
-                                    ],
+                                        const Positioned(
+                                          bottom: 10,
+                                          right: 10,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                'Tune your ',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              Text(
+                                                'Instrument Easily ',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -298,7 +347,6 @@ class DashboardView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Text for beginner song
                   Padding(
                     padding: EdgeInsets.only(
                       top: isPortrait
@@ -319,7 +367,6 @@ class DashboardView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Card with IM Yours song
                   Padding(
                     padding: EdgeInsets.only(
                       top: isPortrait
@@ -371,7 +418,7 @@ class DashboardView extends StatelessWidget {
                               width: isPortrait ? 180 : screenWidth * 0.3,
                               height: 130,
                               child: Image.asset(
-                                'assets/images/imv.jpg',
+                                'assets/images/song1.jpg',
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -387,10 +434,11 @@ class DashboardView extends StatelessWidget {
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.black, // Ensure black background
-        unselectedItemColor: Colors.white, // White unselected icons
-        selectedItemColor: const Color(0xFFB964E9), // Purple selected icon
-        currentIndex: 0,
+        backgroundColor: Colors.black,
+        unselectedItemColor: Colors.white,
+        selectedItemColor: const Color(0xFFB964E9),
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

@@ -1,61 +1,117 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../data/data_source/tuner_local_data_source.dart';
+import '../../data/repository/tuner_repository_impl.dart';
+import '../../domain/use_case/analyze_frequency_usecase.dart';
+import '../../domain/use_case/get_closest_note_usecase.dart';
+import '../../domain/use_case/start_recording_usecase.dart';
+import '../../domain/use_case/stop_recording_usecase.dart';
+import '../view_model/tuner_bloc.dart';
+import '../view_model/tuner_event.dart';
+import '../view_model/tuner_state.dart';
+
+class TunerPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => TunerBloc(
+        startRecordingUseCase:
+            StartRecordingUseCase(TunerRepositoryImpl(TunerLocalDataSource())),
+        stopRecordingUseCase:
+            StopRecordingUseCase(TunerRepositoryImpl(TunerLocalDataSource())),
+        analyzeFrequencyUseCase: AnalyzeFrequencyUseCase(
+            TunerRepositoryImpl(TunerLocalDataSource())),
+        getClosestNoteUseCase:
+            GetClosestNoteUseCase(TunerRepositoryImpl(TunerLocalDataSource())),
+      ),
+      child: TunerView(),
+    );
+  }
+}
 
 class TunerView extends StatelessWidget {
-  const TunerView({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background Image
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/background.jpg', // Ensure this path is correct
-              fit: BoxFit.cover,
-            ),
-          ),
-          // UI Content
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Back button and Lessons text at the top
-                Padding(
-                  padding:
-                      const EdgeInsets.only(top: 50.0), // Space from the top
-                  child: Row(
-                    children: [
-                      // Back Button
-                      IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colors.white),
-                        onPressed: () {
-                          // Navigate back to DashboardView
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      // Lessons text
-                      Text(
-                        'Tuner',
-                        style: GoogleFonts.montserrat(
-                          fontWeight: FontWeight.w800,
-                          fontSize: 36,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
+      appBar: AppBar(title: Text('Tuner')),
+      body: Center(
+        child: BlocBuilder<TunerBloc, TunerState>(
+          builder: (context, state) {
+            if (state is TunerLoading) {
+              return CircularProgressIndicator();
+            } else if (state is TunerLoaded) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                      'Frequency: ${state.frequency?.toStringAsFixed(2) ?? 'N/A'} Hz'),
+                  Text(
+                      'Closest Note: ${state.closestNote?.name ?? 'N/A'} (${state.closestNote?.frequency.toStringAsFixed(2) ?? 'N/A'} Hz)'),
+                  DropdownButton<String>(
+                    value: context.read<TunerBloc>().currentInstrument,
+                    onChanged: (value) {
+                      context
+                          .read<TunerBloc>()
+                          .add(InstrumentChangedEvent(value!));
+                    },
+                    items: ['guitar', 'ukulele'].map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
                   ),
-                ),
-                // Space before other content
-                const SizedBox(height: 20),
-                // Placeholder for content
-                const Placeholder(),
-              ],
-            ),
-          ),
-        ],
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<TunerBloc>().add(StartRecordingEvent());
+                    },
+                    child: Text('Start Recording'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<TunerBloc>().add(StopRecordingEvent());
+                    },
+                    child: Text('Stop Recording'),
+                  ),
+                ],
+              );
+            } else if (state is TunerError) {
+              return Text('Error occurred');
+            } else {
+              return Column(
+                children: [
+                  DropdownButton<String>(
+                    value: context.read<TunerBloc>().currentInstrument,
+                    onChanged: (value) {
+                      context
+                          .read<TunerBloc>()
+                          .add(InstrumentChangedEvent(value!));
+                    },
+                    items: ['guitar', 'ukulele'].map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<TunerBloc>().add(StartRecordingEvent());
+                    },
+                    child: Text('Start Recording'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<TunerBloc>().add(StopRecordingEvent());
+                    },
+                    child: Text('Stop Recording'),
+                  ),
+                ],
+              );
+            }
+          },
+        ),
       ),
     );
   }

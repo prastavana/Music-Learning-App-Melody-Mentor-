@@ -34,7 +34,7 @@ class TunerLocalDataSource {
       double maxMagnitude = 0;
       int maxIndex = 0;
       for (int i = 0; i < spectrum.length; i++) {
-        double magnitude = spectrum[i].abs();
+        double magnitude = spectrum[i].abs() as double;
         if (magnitude > maxMagnitude) {
           maxMagnitude = magnitude;
           maxIndex = i;

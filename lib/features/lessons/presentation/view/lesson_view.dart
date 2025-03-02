@@ -18,7 +18,9 @@ class _LessonViewState extends State<LessonView> {
   @override
   void initState() {
     super.initState();
-    _loadLessons();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadLessons();
+    });
   }
 
   void _loadLessons() {
@@ -31,8 +33,7 @@ class _LessonViewState extends State<LessonView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Lessons',
-            style: TextStyle(color: Colors.white)), // White title
+        title: Text('Lessons', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
       ),
       body: Container(
@@ -50,7 +51,7 @@ class _LessonViewState extends State<LessonView> {
           ),
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start, // Align to the start
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -60,8 +61,7 @@ class _LessonViewState extends State<LessonView> {
                   return GestureDetector(
                     onTap: () {
                       setState(() {
-                        _selectedInstrument =
-                            category.toLowerCase(); // Set selected instrument
+                        _selectedInstrument = category.toLowerCase();
                       });
                       _loadLessons();
                     },
@@ -113,8 +113,7 @@ class _LessonViewState extends State<LessonView> {
                             children: [
                               Text(
                                 '${lesson.day}',
-                                style: TextStyle(
-                                    color: Colors.white), // White day text
+                                style: TextStyle(color: Colors.white),
                               ),
                               Spacer(),
                               if (isCompleted)

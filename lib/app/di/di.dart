@@ -197,7 +197,6 @@ _initSongDependencies() {
 }
 
 _initThemeCubit() {
-  // Register ThemeCubit as a Lazy Singleton
   getIt.registerLazySingleton<ThemeCubit>(
     () => ThemeCubit(),
   );

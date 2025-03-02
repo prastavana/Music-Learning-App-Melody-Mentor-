@@ -134,35 +134,79 @@ class _SessionViewState extends State<SessionView> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.darkGradientMid1, // Set background color
-      shape: RoundedRectangleBorder(
-        // Set rounded corners
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
         return Container(
-          padding: EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                AppColors.modalGradientStart.withOpacity(0.8),
+                AppColors.modalGradientEnd.withOpacity(0.8),
+              ],
+            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(30.0)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 10,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          padding: EdgeInsets.all(24.0),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${session.day} - ${session.title}',
+                Center(
+                  child: Text(
+                    '${session.day} - ${session.title}',
                     style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white)),
-                SizedBox(height: 15),
-                Text('Description: ${session.description}',
-                    style: TextStyle(color: Colors.white70)),
-                SizedBox(height: 10),
-                Text('Duration: ${session.duration} minutes',
-                    style: TextStyle(color: Colors.white70)),
-                SizedBox(height: 10),
-                Text('Instructions: ${session.instructions}',
-                    style: TextStyle(color: Colors.white70)),
-                SizedBox(height: 15),
-                if (session.file != null)
-                  _buildYouTubeVideo(session.file!), // Display YouTube video
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Description:',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  session.description,
+                  style: TextStyle(color: Colors.white70, fontSize: 16),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Duration: ${session.duration} minutes',
+                  style: TextStyle(color: Colors.white70, fontSize: 16),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Instructions:',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  session.instructions,
+                  style: TextStyle(color: Colors.white70, fontSize: 16),
+                ),
+                SizedBox(height: 20),
+                if (session.file != null) _buildYouTubeVideo(session.file!),
               ],
             ),
           ),
@@ -177,22 +221,26 @@ class _SessionViewState extends State<SessionView> {
       return Text('Invalid YouTube URL', style: TextStyle(color: Colors.red));
     }
 
-    YoutubePlayerController _controller = YoutubePlayerController(
-      initialVideoId: videoId,
-      flags: YoutubePlayerFlags(
-        autoPlay: false,
-        mute: false,
-      ),
-    );
+    return StatefulBuilder(
+      builder: (context, setState) {
+        YoutubePlayerController _controller = YoutubePlayerController(
+          initialVideoId: videoId,
+          flags: YoutubePlayerFlags(
+            autoPlay: false,
+            mute: false,
+          ),
+        );
 
-    return YoutubePlayer(
-      controller: _controller,
-      showVideoProgressIndicator: true,
-      progressIndicatorColor: Colors.amber,
-      progressColors: ProgressBarColors(
-        playedColor: Colors.amber,
-        handleColor: Colors.amberAccent,
-      ),
+        return YoutubePlayer(
+          controller: _controller,
+          showVideoProgressIndicator: true,
+          progressIndicatorColor: Colors.amber,
+          progressColors: ProgressBarColors(
+            playedColor: Colors.amber,
+            handleColor: Colors.amberAccent,
+          ),
+        );
+      },
     );
   }
 }

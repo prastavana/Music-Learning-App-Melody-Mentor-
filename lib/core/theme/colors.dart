@@ -30,4 +30,10 @@ class AppColors {
   static const Color lightNavBarBackground = Colors.white;
   static const Color lightNavBarSelected = Color(0xFFB964E9);
   static const Color lightNavBarUnselected = Colors.black;
+
+  // Modal Colors
+  static const Color modalGradientStart =
+      Color(0xFF7A68A6); // Even Darker Lavender
+  static const Color modalGradientEnd =
+      Color(0xFF4A89B8); // Even Darker Sky Blue
 }

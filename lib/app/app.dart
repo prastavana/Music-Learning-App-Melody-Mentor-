@@ -13,6 +13,12 @@ import '../features/session/presentation/view_model/session_bloc.dart';
 import '../features/tuner/presentation/view_model/tuner_bloc.dart';
 import 'di/di.dart';
 
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initDependencies();
+  runApp(const App());
+}
+
 class App extends StatelessWidget {
   const App({super.key});
 
@@ -29,16 +35,16 @@ class App extends StatelessWidget {
         BlocProvider(create: (_) => getIt<ThemeCubit>()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeData>(
-        // Corrected BlocBuilder
         builder: (context, themeData) {
+          print("App BlocBuilder: brightness = ${themeData.brightness}");
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Melody Mentor',
-            theme: AppTheme.lightTheme, // Set light theme
-            darkTheme: AppTheme.darkTheme, //set dark theme
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
             themeMode: themeData.brightness == Brightness.dark
                 ? ThemeMode.dark
-                : ThemeMode.light, // Corrected themeMode logic
+                : ThemeMode.light,
             home: const OnboardingView(),
           );
         },

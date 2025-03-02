@@ -10,6 +10,7 @@ class ApiEndpoints {
   // ====================== Auth Routes ======================
   static const String login = "auth/login";
   static const String register = "auth/register";
+  static const String getCurrentUser = "/auth/getMe";
   static const String getAllStudent = "auth/getAllStudents";
   static const String updateStudent = "auth/updateStudent/";
   static const String deleteStudent = "auth/deleteStudent/";

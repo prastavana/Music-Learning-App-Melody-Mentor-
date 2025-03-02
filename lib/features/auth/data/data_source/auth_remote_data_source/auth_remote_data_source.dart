@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 
 import '../../../../../app/constants/api_endpoints.dart';
 import '../../../domain/entity/auth_entity.dart';
+import '../../model/auth_api_model.dart';
 import '../auth_data_source.dart';
 
 class AuthRemoteDataSource implements IAuthDataSource {
@@ -89,6 +90,26 @@ class AuthRemoteDataSource implements IAuthDataSource {
         final str = response.data['data'];
 
         return str;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    } on DioException catch (e) {
+      throw Exception(e);
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  @override
+  Future<AuthEntity> getCurrentUser(String token) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      Response response = await _dio
+          .get(ApiEndpoints.getCurrentUser); // Use your getMe endpoint
+
+      if (response.statusCode == 200) {
+        final authApiModel = AuthApiModel.fromJson(response.data);
+        return authApiModel.toEntity();
       } else {
         throw Exception(response.statusMessage);
       }

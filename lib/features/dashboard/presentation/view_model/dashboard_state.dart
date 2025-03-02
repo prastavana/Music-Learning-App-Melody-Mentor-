@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:music_learning_app/features/session/presentation/view/session_view.dart';
+import 'package:music_learning_app/features/dashboard/presentation/view/settings_view.dart';
 
 import '../../../chords/presentation/view/song_view.dart';
 import '../../../lessons/presentation/view/lesson_view.dart';
@@ -23,7 +23,7 @@ class DashboardState {
           SongView(),
           LessonView(),
           TunerView(),
-          SessionView(), // Add TunerView to the list of views
+          SettingsView(), // Add TunerView to the list of views
           // SettingsView(),
         ],
       );

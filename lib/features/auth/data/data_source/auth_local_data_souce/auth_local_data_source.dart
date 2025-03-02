@@ -1,5 +1,9 @@
+// auth_local_data_source.dart
 import 'dart:io';
 
+import 'package:dartz/dartz.dart'; // Import Either
+
+import '../../../../../core/error/failure.dart'; // Import Failure
 import '../../../../../core/network/hive_service.dart';
 import '../../../domain/entity/auth_entity.dart';
 import '../../model/auth_hive_model.dart';
@@ -11,22 +15,13 @@ class AuthLocalDataSource implements IAuthDataSource {
   AuthLocalDataSource(this._hiveService);
 
   @override
-  Future<AuthEntity> getCurrentUser() {
-    // Return only the relevant fields
-    return Future.value(AuthEntity(
-      name: "", // updated field
-      email: "", // updated field
-      password: "", // updated field
-    ));
-  }
-
   @override
   Future<String> loginStudent(String email, String password) async {
     try {
       await _hiveService.login(email, password);
-      return Future.value("Success");
+      return "Success";
     } catch (e) {
-      return Future.error(e);
+      throw e;
     }
   }
 
@@ -37,14 +32,19 @@ class AuthLocalDataSource implements IAuthDataSource {
       final authHiveModel = AuthHiveModel.fromEntity(student);
 
       await _hiveService.register(authHiveModel);
-      return Future.value();
     } catch (e) {
-      return Future.error(e);
+      throw e;
     }
   }
 
   @override
   Future<String> uploadProfilePicture(File file) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<Failure, AuthEntity>> getCurrentUser(String token) {
+    // TODO: implement getCurrentUser
     throw UnimplementedError();
   }
 }

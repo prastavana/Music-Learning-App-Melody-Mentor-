@@ -1,3 +1,4 @@
+// auth_remote_repository.dart
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
@@ -16,16 +17,20 @@ class AuthRemoteRepository implements IAuthRepository {
   Future<Either<Failure, void>> registerStudent(AuthEntity student) async {
     try {
       await _authRemoteDataSource.registerStudent(student);
-      return Right(null);
+      return const Right(null);
     } catch (e) {
       return Left(ApiFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, AuthEntity>> getCurrentUser() {
-    // TODO: implement getCurrentUser
-    throw UnimplementedError();
+  Future<Either<Failure, AuthEntity>> getCurrentUser(String token) async {
+    try {
+      final result = await _authRemoteDataSource.getCurrentUser(token);
+      return result; // Corrected: Return the Either directly
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
   }
 
   @override
@@ -44,16 +49,6 @@ class AuthRemoteRepository implements IAuthRepository {
     try {
       final imageName = await _authRemoteDataSource.uploadProfilePicture(file);
       return Right(imageName);
-    } catch (e) {
-      return Left(ApiFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, AuthEntity>> getCurrentUser(String token) async {
-    try {
-      final user = await _authRemoteDataSource.getCurrentUser(token);
-      return Right(user);
     } catch (e) {
       return Left(ApiFailure(message: e.toString()));
     }

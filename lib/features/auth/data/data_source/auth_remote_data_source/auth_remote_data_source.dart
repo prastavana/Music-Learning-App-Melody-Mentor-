@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:music_learning_app/core/error/failure.dart';
 
 import '../../../../../app/constants/api_endpoints.dart';
 import '../../../domain/entity/auth_entity.dart';
@@ -35,12 +37,6 @@ class AuthRemoteDataSource implements IAuthDataSource {
     } catch (e) {
       throw Exception(e);
     }
-  }
-
-  @override
-  Future<AuthEntity> getCurrentUser() {
-    // TODO: implement getCurrentUser
-    throw UnimplementedError();
   }
 
   @override
@@ -101,22 +97,25 @@ class AuthRemoteDataSource implements IAuthDataSource {
   }
 
   @override
-  Future<AuthEntity> getCurrentUser(String token) async {
+  Future<Either<Failure, AuthEntity>> getCurrentUser(String token) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
-      Response response = await _dio
-          .get(ApiEndpoints.getCurrentUser); // Use your getMe endpoint
+      Response response = await _dio.get(ApiEndpoints.getCurrentUser);
 
       if (response.statusCode == 200) {
         final authApiModel = AuthApiModel.fromJson(response.data);
-        return authApiModel.toEntity();
+        return Right(authApiModel.toEntity());
       } else {
-        throw Exception(response.statusMessage);
+        return Left(
+            ApiFailure(message: response.statusMessage ?? "Unknown Error"));
       }
     } on DioException catch (e) {
-      throw Exception(e);
+      if (e.response != null) {
+        return Left(ApiFailure(message: e.response!.data.toString()));
+      }
+      return Left(ApiFailure(message: e.message ?? "Dio Exception"));
     } catch (e) {
-      throw Exception(e);
+      return Left(ApiFailure(message: e.toString()));
     }
   }
 }

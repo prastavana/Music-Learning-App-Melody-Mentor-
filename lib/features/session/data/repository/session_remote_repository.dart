@@ -5,11 +5,11 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/error/failure.dart';
 import '../../domain/entity/session_entity.dart';
 import '../../domain/repository/session_repository.dart';
-import '../data_source/session_remote_data_source.dart';
+import '../data_source/session_data_source.dart'; // Import ISessionDataSource
 import '../model/session_api_model.dart';
 
 class SessionRemoteRepository implements ISessionRepository {
-  final SessionRemoteDataSource remoteDataSource;
+  final ISessionDataSource remoteDataSource; // Change to ISessionDataSource
 
   SessionRemoteRepository({required this.remoteDataSource});
 
@@ -17,7 +17,8 @@ class SessionRemoteRepository implements ISessionRepository {
   Future<Either<Failure, List<SessionEntity>>> getAllSessions(
       {String? instrument}) async {
     try {
-      final sessions = await remoteDataSource.getAllSessions();
+      final sessions =
+          await remoteDataSource.getAllSessions(); // Use ISessionDataSource
       List<ApiSessionModel> filteredSessions = sessions;
       if (instrument != null) {
         filteredSessions = sessions

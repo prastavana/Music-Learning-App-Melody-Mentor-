@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../../../core/theme/colors.dart';
 import '../../domain/entity/session_entity.dart';
@@ -133,28 +134,65 @@ class _SessionViewState extends State<SessionView> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: AppColors.darkGradientMid1, // Set background color
+      shape: RoundedRectangleBorder(
+        // Set rounded corners
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+      ),
       builder: (BuildContext context) {
         return Container(
-          height: MediaQuery.of(context).size.height * 0.7,
           padding: EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('${session.day} - ${session.title}',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
-              Text('Description: ${session.description}'),
-              SizedBox(height: 10),
-              Text('Duration: ${session.duration} minutes'),
-              SizedBox(height: 10),
-              Text('Instructions: ${session.instructions}'),
-              SizedBox(height: 10),
-              if (session.file != null)
-                Text('File: ${session.file}'), // Display file URL
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('${session.day} - ${session.title}',
+                    style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)),
+                SizedBox(height: 15),
+                Text('Description: ${session.description}',
+                    style: TextStyle(color: Colors.white70)),
+                SizedBox(height: 10),
+                Text('Duration: ${session.duration} minutes',
+                    style: TextStyle(color: Colors.white70)),
+                SizedBox(height: 10),
+                Text('Instructions: ${session.instructions}',
+                    style: TextStyle(color: Colors.white70)),
+                SizedBox(height: 15),
+                if (session.file != null)
+                  _buildYouTubeVideo(session.file!), // Display YouTube video
+              ],
+            ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildYouTubeVideo(String youtubeUrl) {
+    String? videoId = YoutubePlayer.convertUrlToId(youtubeUrl);
+    if (videoId == null) {
+      return Text('Invalid YouTube URL', style: TextStyle(color: Colors.red));
+    }
+
+    YoutubePlayerController _controller = YoutubePlayerController(
+      initialVideoId: videoId,
+      flags: YoutubePlayerFlags(
+        autoPlay: false,
+        mute: false,
+      ),
+    );
+
+    return YoutubePlayer(
+      controller: _controller,
+      showVideoProgressIndicator: true,
+      progressIndicatorColor: Colors.amber,
+      progressColors: ProgressBarColors(
+        playedColor: Colors.amber,
+        handleColor: Colors.amberAccent,
+      ),
     );
   }
 }

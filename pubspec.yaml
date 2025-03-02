@@ -33,6 +33,7 @@ dependencies:
   mocktail: ^1.0.4
   test_cov_console: ^0.2.2
   webview_flutter: ^4.4.2
+  youtube_player_flutter: ^8.1.2
 
 
 

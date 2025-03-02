@@ -212,12 +212,17 @@ _initLessonDependencies() {
   getIt.registerFactory(() => LessonBloc(getLessonsUseCase: getIt()));
 }
 
-void _initSessionDependencies() {
+_initSessionDependencies() {
   getIt.registerLazySingleton<ISessionDataSource>(
-      () => SessionRemoteDataSource(dio: getIt<Dio>()));
-  getIt.registerLazySingleton(() => SessionRemoteRepository(
-      remoteDataSource: getIt<ISessionDataSource>())); // Corrected line
+    () => SessionRemoteDataSource(dio: getIt<Dio>()),
+  );
+  getIt.registerLazySingleton<SessionRemoteRepository>(
+    () => SessionRemoteRepository(
+      remoteDataSource: getIt<ISessionDataSource>(),
+    ),
+  );
   getIt.registerLazySingleton(
-      () => GetSessionsUseCase(repository: getIt<SessionRemoteRepository>()));
+    () => GetSessionsUseCase(repository: getIt<SessionRemoteRepository>()),
+  );
   getIt.registerFactory(() => SessionBloc(getSessions: getIt()));
 }

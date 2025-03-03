@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:music_learning_app/core/theme/theme_cubit.dart';
+import 'package:music_learning_app/features/auth/presentation/view/profile_view.dart'; // Import ProfileView
 import 'package:music_learning_app/features/dashboard/presentation/view_model/dashboard_cubit.dart';
 
 class SettingsView extends StatelessWidget {
@@ -33,7 +34,11 @@ class SettingsView extends StatelessWidget {
               title: const Text('Profile',
                   style: TextStyle(color: Colors.white, fontSize: 18)),
               onTap: () {
-                // Implement profile navigation
+                // Navigate to ProfileView
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfileView()),
+                );
               },
             ),
             const Divider(color: Colors.white24),

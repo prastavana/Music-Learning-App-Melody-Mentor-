@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../core/theme/theme_cubit.dart';
 import '../features/auth/presentation/view_model/login/login_bloc.dart';
+import '../features/auth/presentation/view_model/profile/profile_bloc.dart';
 import '../features/chords/presentation/view_model/song_bloc.dart';
 import '../features/dashboard/presentation/view_model/dashboard_cubit.dart';
 import '../features/lessons/presentation/view_model/lesson_bloc.dart';
@@ -33,6 +34,7 @@ class App extends StatelessWidget {
         BlocProvider(create: (_) => getIt<SessionBloc>()),
         BlocProvider(create: (_) => getIt<TunerBloc>()),
         BlocProvider(create: (_) => getIt<ThemeCubit>()),
+        BlocProvider(create: (_) => getIt<ProfileBloc>()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeData>(
         builder: (context, themeData) {

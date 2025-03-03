@@ -65,6 +65,10 @@ class DashboardView extends StatelessWidget {
                     label: 'Tuner',
                   ),
                   BottomNavigationBarItem(
+                    icon: Icon(Icons.play_arrow), // Choose an appropriate icon
+                    label: 'Session',
+                  ),
+                  BottomNavigationBarItem(
                     icon: Icon(Icons.settings),
                     label: 'Settings',
                   ),
@@ -152,7 +156,7 @@ class DashboardView extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                context.read<DashboardCubit>().onTabTapped(1);
+                context.read<DashboardCubit>().onTabTapped(5);
               },
               child: Padding(
                 padding: EdgeInsets.only(
@@ -215,7 +219,7 @@ class DashboardView extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                context.read<DashboardCubit>().onTabTapped(2);
+                context.read<DashboardCubit>().onTabTapped(1);
               },
               child: Padding(
                 padding: EdgeInsets.only(
@@ -280,7 +284,7 @@ class DashboardView extends StatelessWidget {
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          context.read<DashboardCubit>().onTabTapped(4);
+                          context.read<DashboardCubit>().onTabTapped(3);
                         },
                         child: Card(
                           shape: RoundedRectangleBorder(

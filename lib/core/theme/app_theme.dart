@@ -17,6 +17,18 @@ class AppTheme {
       selectedItemColor: AppColors.darkNavBarSelected,
       unselectedItemColor: AppColors.darkNavBarUnselected,
     ),
+    textTheme: const TextTheme(
+      bodyMedium: TextStyle(color: Colors.white),
+    ),
+    dividerColor: Colors.grey[800],
+    // Add gradient colors to dark theme
+    colorScheme: const ColorScheme.dark().copyWith(
+      primary: AppColors.darkGradientStart,
+      secondary: AppColors.darkGradientMid1,
+      tertiary: AppColors.darkGradientMid2,
+      surface: AppColors.darkGradientMid3,
+      background: AppColors.darkGradientEnd,
+    ),
   );
 
   static ThemeData lightTheme = ThemeData(
@@ -32,6 +44,17 @@ class AppTheme {
       backgroundColor: AppColors.lightNavBarBackground,
       selectedItemColor: AppColors.lightNavBarSelected,
       unselectedItemColor: AppColors.lightNavBarUnselected,
+    ),
+    textTheme: const TextTheme(
+      bodyMedium: TextStyle(color: Colors.black),
+    ),
+    dividerColor: Colors.grey[200],
+    // Add gradient colors to light theme
+    colorScheme: const ColorScheme.light().copyWith(
+      primary: AppColors.lightGradientStart,
+      secondary: AppColors.lightGradientMid1,
+      tertiary: AppColors.lightGradientMid2,
+      surface: AppColors.lightGradientEnd,
     ),
   );
 }

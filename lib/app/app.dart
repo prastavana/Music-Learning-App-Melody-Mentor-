@@ -1,3 +1,4 @@
+// main.dart or app.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:music_learning_app/core/theme/app_theme.dart';
@@ -37,6 +38,7 @@ class App extends StatelessWidget {
         BlocProvider(create: (_) => getIt<ProfileBloc>()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeData>(
+        // Make sure this is here
         builder: (context, themeData) {
           print("App BlocBuilder: brightness = ${themeData.brightness}");
           return MaterialApp(

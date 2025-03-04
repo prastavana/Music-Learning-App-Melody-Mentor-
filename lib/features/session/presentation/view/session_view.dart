@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:music_learning_app/core/theme/theme_cubit.dart'; // Import ThemeCubit
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../../../core/theme/colors.dart';
@@ -30,107 +31,134 @@ class _SessionViewState extends State<SessionView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Sessions', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.black,
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              AppColors.darkGradientStart,
-              AppColors.darkGradientMid1,
-              AppColors.darkGradientMid2,
-              AppColors.darkGradientMid3,
-              AppColors.darkGradientEnd,
-            ],
+    return BlocBuilder<ThemeCubit, ThemeData>(
+      // Wrap with ThemeCubit BlocBuilder
+      builder: (context, themeData) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Sessions',
+                style: TextStyle(
+                    color: themeData
+                        .appBarTheme.foregroundColor)), // Use themeData
+            backgroundColor:
+                themeData.appBarTheme.backgroundColor, // Use themeData
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: ["Ukulele", "Guitar", "Piano"].map((category) {
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedInstrument = category.toLowerCase();
-                      });
-                      _loadSessions();
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: _selectedInstrument == category.toLowerCase()
-                              ? AppColors.darkGradientMid2
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        child: Text(
-                          category,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight:
-                                _selectedInstrument == category.toLowerCase()
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  themeData.colorScheme.primary, // Use themeData
+                  themeData.colorScheme.secondary, // Use themeData
+                  themeData.colorScheme.tertiary, // Use themeData
+                  themeData.colorScheme.surface, // Use themeData
+                  themeData.colorScheme.background, // Use themeData
+                ],
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: ["Ukulele", "Guitar", "Piano"].map((category) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedInstrument = category.toLowerCase();
+                          });
+                          _loadSessions();
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color:
+                                  _selectedInstrument == category.toLowerCase()
+                                      ? themeData
+                                          .colorScheme.tertiary // Use themeData
+                                      : Colors.transparent,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            child: Text(
+                              category,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: _selectedInstrument ==
+                                        category.toLowerCase()
                                     ? FontWeight.bold
                                     : FontWeight.normal,
-                            color: _selectedInstrument == category.toLowerCase()
-                                ? Colors.white
-                                : Colors.grey,
+                                color: _selectedInstrument ==
+                                        category.toLowerCase()
+                                    ? Colors.white
+                                    : Colors.grey,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-            SizedBox(height: 20),
-            Expanded(
-              child: BlocBuilder<SessionBloc, SessionState>(
-                builder: (context, state) {
-                  if (state is SessionLoading) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (state is SessionLoaded) {
-                    return ListView.builder(
-                      itemCount: state.sessions.length,
-                      itemBuilder: (context, index) {
-                        final session = state.sessions[index];
-                        return ListTile(
-                          title: Text(
-                            '${session.day} - ${session.title}',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          onTap: () {
-                            _showSessionDetails(session);
+                      );
+                    }).toList(),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Expanded(
+                  child: BlocBuilder<SessionBloc, SessionState>(
+                    builder: (context, state) {
+                      if (state is SessionLoading) {
+                        return Center(
+                            child: CircularProgressIndicator(
+                                color: themeData
+                                    .colorScheme.tertiary)); // Use themeData
+                      } else if (state is SessionLoaded) {
+                        return ListView.builder(
+                          itemCount: state.sessions.length,
+                          itemBuilder: (context, index) {
+                            final session = state.sessions[index];
+                            return ListTile(
+                              title: Text(
+                                '${session.day} - ${session.title}',
+                                style: TextStyle(
+                                    color: themeData.textTheme.bodyMedium
+                                        ?.color), // Use themeData
+                              ),
+                              onTap: () {
+                                _showSessionDetails(
+                                    session, themeData); // Pass themeData
+                              },
+                            );
                           },
                         );
-                      },
-                    );
-                  } else if (state is SessionError) {
-                    return Center(child: Text('Error: ${state.message}'));
-                  } else {
-                    return Center(child: Text('Select Instrument'));
-                  }
-                },
-              ),
+                      } else if (state is SessionError) {
+                        return Center(
+                            child: Text('Error: ${state.message}',
+                                style: TextStyle(
+                                    color: themeData.textTheme.bodyMedium
+                                        ?.color))); // Use themeData
+                      } else {
+                        return Center(
+                            child: Text('Select Instrument',
+                                style: TextStyle(
+                                    color: themeData.textTheme.bodyMedium
+                                        ?.color))); // Use themeData
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
-  void _showSessionDetails(SessionEntity session) {
+  void _showSessionDetails(SessionEntity session, ThemeData themeData) {
+    // Added ThemeData
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,

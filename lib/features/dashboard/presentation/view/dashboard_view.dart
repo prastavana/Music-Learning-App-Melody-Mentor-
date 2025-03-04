@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:music_learning_app/core/theme/theme_cubit.dart';
 
 import '../view_model/dashboard_cubit.dart';
 import '../view_model/dashboard_state.dart';
@@ -14,103 +15,107 @@ class DashboardView extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isPortrait = screenHeight > screenWidth;
 
-    return BlocBuilder<DashboardCubit, DashboardState>(
-      builder: (context, state) {
-        return Theme(
-            // Wrap with Theme widget for conditional theme
-            data: Theme.of(context).copyWith(
-              bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-                backgroundColor:
-                    Colors.black, // Set background color to black here
+    return BlocBuilder<ThemeCubit, ThemeData>(
+      builder: (context, themeData) {
+        return BlocBuilder<DashboardCubit, DashboardState>(
+          builder: (context, state) {
+            return Theme(
+              data: themeData.copyWith(
+                bottomNavigationBarTheme: themeData.bottomNavigationBarTheme,
               ),
-            ),
-            child: Scaffold(
-              appBar: AppBar(
-                backgroundColor: Colors.black,
-                title: Text(
-                  'Melody Mentor',
-                  style: GoogleFonts.kanit(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
+              child: Scaffold(
+                appBar: AppBar(
+                  backgroundColor: themeData.appBarTheme.backgroundColor,
+                  title: Text(
+                    'Melody Mentor',
+                    style: GoogleFonts.kanit(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w800,
+                      color: themeData.appBarTheme.foregroundColor,
+                    ),
                   ),
+                  actions: [
+                    IconButton(
+                      icon: Icon(Icons.logout,
+                          color: themeData.appBarTheme.foregroundColor),
+                      onPressed: () {
+                        context.read<DashboardCubit>().logout(context);
+                      },
+                    ),
+                  ],
                 ),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.logout, color: Colors.white),
-                    onPressed: () {
-                      context.read<DashboardCubit>().logout(context);
-                    },
-                  ),
-                ],
+                body: _buildBody(context, state, isPortrait, screenHeight,
+                    screenWidth, themeData),
+                bottomNavigationBar: BottomNavigationBar(
+                  items: const <BottomNavigationBarItem>[
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.home),
+                      label: 'Home',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.music_note),
+                      label: 'Song',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.book),
+                      label: 'Lesson',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.graphic_eq),
+                      label: 'Tuner',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.play_arrow),
+                      label: 'Session',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.settings),
+                      label: 'Settings',
+                    ),
+                  ],
+                  currentIndex: state.selectedIndex,
+                  selectedItemColor:
+                      themeData.bottomNavigationBarTheme.selectedItemColor,
+                  unselectedItemColor:
+                      themeData.bottomNavigationBarTheme.unselectedItemColor,
+                  onTap: (index) {
+                    context.read<DashboardCubit>().onTabTapped(index);
+                  },
+                ),
               ),
-              body: _buildBody(
-                  context, state, isPortrait, screenHeight, screenWidth),
-              bottomNavigationBar: BottomNavigationBar(
-                items: const <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.home),
-                    label: 'Home',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.music_note),
-                    label: 'Song',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.book),
-                    label: 'Lesson',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.graphic_eq),
-                    label: 'Tuner',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.play_arrow), // Choose an appropriate icon
-                    label: 'Session',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.settings),
-                    label: 'Settings',
-                  ),
-                ],
-                currentIndex: state.selectedIndex,
-                selectedItemColor: Colors.purple[300],
-                unselectedItemColor: Colors.white70,
-                onTap: (index) {
-                  context.read<DashboardCubit>().onTabTapped(index);
-                },
-              ),
-            ));
+            );
+          },
+        );
       },
     );
   }
 
   Widget _buildBody(BuildContext context, DashboardState state, bool isPortrait,
-      double screenHeight, double screenWidth) {
+      double screenHeight, double screenWidth, ThemeData themeData) {
     if (state.selectedIndex == 0) {
-      return _buildHomeView(context, isPortrait, screenHeight, screenWidth);
+      return _buildHomeView(
+          context, isPortrait, screenHeight, screenWidth, themeData);
     } else {
       return state.views[state.selectedIndex];
     }
   }
 
   Widget _buildHomeView(BuildContext context, bool isPortrait,
-      double screenHeight, double screenWidth) {
+      double screenHeight, double screenWidth, ThemeData themeData) {
     return Container(
       height: double.infinity,
       width: double.infinity,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Colors.black,
-            Color(0xFF1F0B6F),
-            Color(0xFF3C19AA),
-            Color(0xFF6929CF),
-            Color(0xFFB964E9),
+            themeData.colorScheme.primary,
+            themeData.colorScheme.secondary,
+            themeData.colorScheme.tertiary,
+            themeData.colorScheme.surface,
+            themeData.colorScheme.background,
           ],
-          stops: [0.35, 0.65, 0.75, 0.85, 1.0],
         ),
       ),
       child: SingleChildScrollView(
@@ -132,7 +137,7 @@ class DashboardView extends StatelessWidget {
                         style: GoogleFonts.kanit(
                           fontSize: isPortrait ? 30 : 24,
                           fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                          color: themeData.textTheme.bodyMedium?.color,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -148,7 +153,7 @@ class DashboardView extends StatelessWidget {
                     'Welcome to Melody Mentor',
                     style: TextStyle(
                       fontSize: isPortrait ? 14 : 12,
-                      color: Colors.white,
+                      color: themeData.textTheme.bodyMedium?.color,
                     ),
                   ),
                 ],

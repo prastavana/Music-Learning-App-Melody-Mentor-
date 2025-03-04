@@ -1,6 +1,7 @@
 // core/network/network_info_impl.dart
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:music_learning_app/core/network/network_info.dart';
+
+import 'network_info.dart';
 
 class NetworkInfoImpl implements NetworkInfo {
   final Connectivity connectivity;

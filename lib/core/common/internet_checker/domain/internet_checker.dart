@@ -1,7 +1,8 @@
 // core/common/internet_checker/internet_checker.dart
 import 'package:dartz/dartz.dart';
-import 'package:music_learning_app/core/common/failure.dart';
-import 'package:music_learning_app/core/network/network_info.dart';
+
+import '../../../error/failure.dart';
+import '../data/network_info.dart';
 
 class InternetChecker {
   final NetworkInfo networkInfo;
@@ -13,7 +14,7 @@ class InternetChecker {
       final isConnected = await networkInfo.isConnected;
       return Right(isConnected);
     } on Exception {
-      return Left(NetworkFailure()); // Or a more specific failure
+      return Left(NetworkFailure(message: '')); // Or a more specific failure
     }
   }
 }

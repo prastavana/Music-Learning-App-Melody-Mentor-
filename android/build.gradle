@@ -1,3 +1,5 @@
+// android/build.gradle
+
 buildscript {
     repositories {
         google()
@@ -5,9 +7,8 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1' // Latest Gradle Plugin version
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10' // Latest Kotlin version
-
+        classpath 'com.android.tools.build:gradle:8.0.0' // Updated AGP version
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20' // Updated Kotlin version
     }
 }
 

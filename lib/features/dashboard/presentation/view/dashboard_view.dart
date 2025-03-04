@@ -3,11 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:music_learning_app/core/theme/theme_cubit.dart';
 
+import '../../../../core/utils/shake_report_overlay.dart';
 import '../view_model/dashboard_cubit.dart';
 import '../view_model/dashboard_state.dart';
 
 class DashboardView extends StatelessWidget {
-  const DashboardView({super.key});
+  final GlobalKey<OverlayState> overlayKey = GlobalKey<OverlayState>();
+  DashboardView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,65 +25,76 @@ class DashboardView extends StatelessWidget {
               data: themeData.copyWith(
                 bottomNavigationBarTheme: themeData.bottomNavigationBarTheme,
               ),
-              child: Scaffold(
-                appBar: AppBar(
-                  backgroundColor: themeData.appBarTheme.backgroundColor,
-                  title: Text(
-                    'Melody Mentor',
-                    style: GoogleFonts.kanit(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                      color: themeData.appBarTheme.foregroundColor,
+              child: Overlay(
+                key: overlayKey,
+                initialEntries: [
+                  OverlayEntry(
+                    builder: (context) => Scaffold(
+                      appBar: AppBar(
+                        backgroundColor: themeData.appBarTheme.backgroundColor,
+                        title: Text(
+                          'Melody Mentor',
+                          style: GoogleFonts.kanit(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w800,
+                            color: themeData.appBarTheme.foregroundColor,
+                          ),
+                        ),
+                        actions: [
+                          IconButton(
+                            icon: Icon(Icons.logout,
+                                color: themeData.appBarTheme.foregroundColor),
+                            onPressed: () {
+                              context.read<DashboardCubit>().logout(context);
+                            },
+                          ),
+                        ],
+                      ),
+                      body: _buildBody(context, state, isPortrait, screenHeight,
+                          screenWidth, themeData),
+                      bottomNavigationBar: BottomNavigationBar(
+                        items: const <BottomNavigationBarItem>[
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.home),
+                            label: 'Home',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.music_note),
+                            label: 'Song',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.book),
+                            label: 'Lesson',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.graphic_eq),
+                            label: 'Tuner',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.play_arrow),
+                            label: 'Session',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.settings),
+                            label: 'Settings',
+                          ),
+                        ],
+                        currentIndex: state.selectedIndex,
+                        selectedItemColor: themeData
+                            .bottomNavigationBarTheme.selectedItemColor,
+                        unselectedItemColor: themeData
+                            .bottomNavigationBarTheme.unselectedItemColor,
+                        onTap: (index) {
+                          context.read<DashboardCubit>().onTabTapped(index);
+                        },
+                      ),
                     ),
                   ),
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.logout,
-                          color: themeData.appBarTheme.foregroundColor),
-                      onPressed: () {
-                        context.read<DashboardCubit>().logout(context);
-                      },
-                    ),
-                  ],
-                ),
-                body: _buildBody(context, state, isPortrait, screenHeight,
-                    screenWidth, themeData),
-                bottomNavigationBar: BottomNavigationBar(
-                  items: const <BottomNavigationBarItem>[
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.home),
-                      label: 'Home',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.music_note),
-                      label: 'Song',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.book),
-                      label: 'Lesson',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.graphic_eq),
-                      label: 'Tuner',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.play_arrow),
-                      label: 'Session',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.settings),
-                      label: 'Settings',
-                    ),
-                  ],
-                  currentIndex: state.selectedIndex,
-                  selectedItemColor:
-                      themeData.bottomNavigationBarTheme.selectedItemColor,
-                  unselectedItemColor:
-                      themeData.bottomNavigationBarTheme.unselectedItemColor,
-                  onTap: (index) {
-                    context.read<DashboardCubit>().onTabTapped(index);
-                  },
-                ),
+                  OverlayEntry(
+                    builder: (context) =>
+                        ShakeReportOverlay(overlayKey: overlayKey),
+                  ),
+                ],
               ),
             );
           },

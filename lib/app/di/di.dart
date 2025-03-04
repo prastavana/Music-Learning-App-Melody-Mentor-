@@ -58,7 +58,7 @@ Future<void> initDependencies() async {
   await _initLoginDependencies();
   await _initSharedPreferences();
   await _initThemeCubit();
-  await _initTunerDependencies(); // Add this line
+  await _initTunerDependencies();
 }
 
 Future<void> _initSharedPreferences() async {

@@ -4,7 +4,6 @@ import 'package:music_learning_app/features/session/presentation/view/session_vi
 
 import '../../../chords/presentation/view/song_view.dart';
 import '../../../lessons/presentation/view/lesson_view.dart';
-import '../../../tuner/presentation/view/tuner_view.dart'; // Import TunerView
 import '../view/dashboard_view.dart';
 
 @immutable
@@ -20,10 +19,9 @@ class DashboardState {
   factory DashboardState.initial() => DashboardState(
         selectedIndex: 0,
         views: [
-          const DashboardView(),
+          DashboardView(),
           SongView(),
           LessonView(),
-          TunerView(),
           SessionView(),
           SettingsView(), // Add TunerView to the list of views
         ],

@@ -1,8 +1,8 @@
-// main.dart or app.dart
+// main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:music_learning_app/core/theme/app_theme.dart';
-import 'package:music_learning_app/features/onboarding/presentation/view/onboarding_view.dart';
+import 'package:music_learning_app/features/dashboard/presentation/view/dashboard_view.dart';
 import 'package:provider/provider.dart';
 
 import '../core/theme/theme_cubit.dart';
@@ -12,7 +12,6 @@ import '../features/chords/presentation/view_model/song_bloc.dart';
 import '../features/dashboard/presentation/view_model/dashboard_cubit.dart';
 import '../features/lessons/presentation/view_model/lesson_bloc.dart';
 import '../features/session/presentation/view_model/session_bloc.dart';
-import '../features/tuner/presentation/view_model/tuner_bloc.dart';
 import 'di/di.dart';
 
 void main() async {
@@ -26,6 +25,8 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Start shake detection when the app is running
+
     return MultiProvider(
       providers: [
         BlocProvider(create: (_) => getIt<LoginBloc>()),
@@ -33,7 +34,6 @@ class App extends StatelessWidget {
         BlocProvider(create: (_) => getIt<SongBloc>()),
         BlocProvider(create: (_) => getIt<LessonBloc>()),
         BlocProvider(create: (_) => getIt<SessionBloc>()),
-        BlocProvider(create: (_) => getIt<TunerBloc>()),
         BlocProvider(create: (_) => getIt<ThemeCubit>()),
         BlocProvider(create: (_) => getIt<ProfileBloc>()),
       ],
@@ -49,7 +49,7 @@ class App extends StatelessWidget {
             themeMode: themeData.brightness == Brightness.dark
                 ? ThemeMode.dark
                 : ThemeMode.light,
-            home: const OnboardingView(),
+            home: DashboardView(),
           );
         },
       ),

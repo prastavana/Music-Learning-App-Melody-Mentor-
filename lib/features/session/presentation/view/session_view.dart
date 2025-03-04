@@ -2,8 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:music_learning_app/core/theme/theme_cubit.dart'; // Import ThemeCubit
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:music_learning_app/core/theme/theme_cubit.dart';
 
 import '../../../../core/theme/colors.dart';
 import '../../domain/entity/session_entity.dart';
@@ -32,16 +31,12 @@ class _SessionViewState extends State<SessionView> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, ThemeData>(
-      // Wrap with ThemeCubit BlocBuilder
       builder: (context, themeData) {
         return Scaffold(
           appBar: AppBar(
             title: Text('Sessions',
-                style: TextStyle(
-                    color: themeData
-                        .appBarTheme.foregroundColor)), // Use themeData
-            backgroundColor:
-                themeData.appBarTheme.backgroundColor, // Use themeData
+                style: TextStyle(color: themeData.appBarTheme.foregroundColor)),
+            backgroundColor: themeData.appBarTheme.backgroundColor,
           ),
           body: Container(
             decoration: BoxDecoration(
@@ -49,11 +44,11 @@ class _SessionViewState extends State<SessionView> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  themeData.colorScheme.primary, // Use themeData
-                  themeData.colorScheme.secondary, // Use themeData
-                  themeData.colorScheme.tertiary, // Use themeData
-                  themeData.colorScheme.surface, // Use themeData
-                  themeData.colorScheme.background, // Use themeData
+                  themeData.colorScheme.primary,
+                  themeData.colorScheme.secondary,
+                  themeData.colorScheme.tertiary,
+                  themeData.colorScheme.surface,
+                  themeData.colorScheme.background,
                 ],
               ),
             ),
@@ -78,8 +73,7 @@ class _SessionViewState extends State<SessionView> {
                             decoration: BoxDecoration(
                               color:
                                   _selectedInstrument == category.toLowerCase()
-                                      ? themeData
-                                          .colorScheme.tertiary // Use themeData
+                                      ? themeData.colorScheme.tertiary
                                       : Colors.transparent,
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -112,8 +106,7 @@ class _SessionViewState extends State<SessionView> {
                       if (state is SessionLoading) {
                         return Center(
                             child: CircularProgressIndicator(
-                                color: themeData
-                                    .colorScheme.tertiary)); // Use themeData
+                                color: themeData.colorScheme.tertiary));
                       } else if (state is SessionLoaded) {
                         return ListView.builder(
                           itemCount: state.sessions.length,
@@ -123,12 +116,11 @@ class _SessionViewState extends State<SessionView> {
                               title: Text(
                                 '${session.day} - ${session.title}',
                                 style: TextStyle(
-                                    color: themeData.textTheme.bodyMedium
-                                        ?.color), // Use themeData
+                                    color:
+                                        themeData.textTheme.bodyMedium?.color),
                               ),
                               onTap: () {
-                                _showSessionDetails(
-                                    session, themeData); // Pass themeData
+                                _showSessionDetails(session, themeData);
                               },
                             );
                           },
@@ -137,14 +129,14 @@ class _SessionViewState extends State<SessionView> {
                         return Center(
                             child: Text('Error: ${state.message}',
                                 style: TextStyle(
-                                    color: themeData.textTheme.bodyMedium
-                                        ?.color))); // Use themeData
+                                    color: themeData
+                                        .textTheme.bodyMedium?.color)));
                       } else {
                         return Center(
                             child: Text('Select Instrument',
                                 style: TextStyle(
-                                    color: themeData.textTheme.bodyMedium
-                                        ?.color))); // Use themeData
+                                    color: themeData
+                                        .textTheme.bodyMedium?.color)));
                       }
                     },
                   ),
@@ -158,7 +150,6 @@ class _SessionViewState extends State<SessionView> {
   }
 
   void _showSessionDetails(SessionEntity session, ThemeData themeData) {
-    // Added ThemeData
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -233,39 +224,8 @@ class _SessionViewState extends State<SessionView> {
                   session.instructions,
                   style: TextStyle(color: Colors.white70, fontSize: 16),
                 ),
-                SizedBox(height: 20),
-                if (session.file != null) _buildYouTubeVideo(session.file!),
               ],
             ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildYouTubeVideo(String youtubeUrl) {
-    String? videoId = YoutubePlayer.convertUrlToId(youtubeUrl);
-    if (videoId == null) {
-      return Text('Invalid YouTube URL', style: TextStyle(color: Colors.red));
-    }
-
-    return StatefulBuilder(
-      builder: (context, setState) {
-        YoutubePlayerController _controller = YoutubePlayerController(
-          initialVideoId: videoId,
-          flags: YoutubePlayerFlags(
-            autoPlay: false,
-            mute: false,
-          ),
-        );
-
-        return YoutubePlayer(
-          controller: _controller,
-          showVideoProgressIndicator: true,
-          progressIndicatorColor: Colors.amber,
-          progressColors: ProgressBarColors(
-            playedColor: Colors.amber,
-            handleColor: Colors.amberAccent,
           ),
         );
       },

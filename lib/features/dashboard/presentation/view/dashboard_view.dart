@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:music_learning_app/core/theme/theme_cubit.dart';
+
 import '../../../../core/utils/shake_report_overlay.dart';
 import '../view_model/dashboard_cubit.dart';
 import '../view_model/dashboard_state.dart';
@@ -89,9 +90,9 @@ class DashboardView extends StatelessWidget {
                   ],
                   currentIndex: state.selectedIndex,
                   selectedItemColor:
-                  themeData.bottomNavigationBarTheme.selectedItemColor,
+                      themeData.bottomNavigationBarTheme.selectedItemColor,
                   unselectedItemColor:
-                  themeData.bottomNavigationBarTheme.unselectedItemColor,
+                      themeData.bottomNavigationBarTheme.unselectedItemColor,
                   onTap: (index) {
                     context.read<DashboardCubit>().onTabTapped(index);
                   },
@@ -117,330 +118,330 @@ class DashboardView extends StatelessWidget {
   Widget _buildHomeView(BuildContext context, bool isPortrait,
       double screenHeight, double screenWidth, ThemeData themeData) {
     return Container(
-        height: double.infinity,
-        width: double.infinity,
-        decoration: BoxDecoration(
+      height: double.infinity,
+      width: double.infinity,
+      decoration: BoxDecoration(
         gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-        themeData.colorScheme.primary,
-        themeData.colorScheme.secondary,
-        themeData.colorScheme.tertiary,
-        themeData.colorScheme.surface,
-        themeData.colorScheme.background,
-        ],
-    ),
-    ),
-    child: SingleChildScrollView(
-    child: Column(
-    children: [
-    Padding(
-    padding: EdgeInsets.only(
-    top: isPortrait ? screenHeight * 0.01 : screenHeight * 0.10,
-    left: 34,
-    right: 20,
-    ),
-    child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-    Row(
-    children: [
-    Text(
-    'HI Pasta!',
-    style: GoogleFonts.kanit(
-    fontSize: isPortrait ? 30 : 24,
-    fontWeight: FontWeight.w800,
-    color: themeData.textTheme.bodyMedium?.color,
-    ),
-    ),
-    const SizedBox(width: 8),
-    Image.asset(
-    'assets/icons/wave.jpg',
-    width: 30,
-    height: 30,
-    ),
-    ],
-    ),
-    const SizedBox(height: 6),
-    Text(
-    'Welcome to Melody Mentor',
-    style: TextStyle(
-    fontSize: isPortrait ? 14 : 12,
-    color: themeData.textTheme.bodyMedium?.color,
-    ),
-    ),
-    ],
-    ),
-    ),
-    GestureDetector(
-    onTap: () {
-    context.read<DashboardCubit>().onTabTapped(5);
-    },
-    child: Padding(
-    padding: EdgeInsets.only(
-    top: isPortrait ? screenHeight * 0.04 : screenHeight * 0.04,
-    left: 20,
-    right: 20,
-    ),
-    child: Card(
-    shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(40),
-    ),
-    elevation: 5,
-    color: Colors.white.withOpacity(0.5),
-    child: Row(
-    children: [
-    const Expanded(
-    child: Padding(
-    padding: EdgeInsets.all(16.0),
-    child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-    Text(
-    'Explore your music learning journey!',
-    style: TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.bold,
-    color: Colors.white,
-    ),
-    ),
-    SizedBox(height: 10),
-    Text(
-    'GET STARTED',
-    style: TextStyle(
-    fontSize: 14,
-    color: Colors.white,
-    ),
-    ),
-    ],
-    ),
-    ),
-    ),
-    ClipRRect(
-    borderRadius: const BorderRadius.only(
-    topRight: Radius.circular(40),
-    bottomRight: Radius.circular(40),
-    ),
-    child: SizedBox(
-    width: isPortrait ? 180 : screenWidth * 0.3,
-    height: 130,
-    child: Image.asset(
-    'assets/images/guitar1.jpg',
-    fit: BoxFit.cover,
-    ),
-    ),
-    ),
-    ],
-    ),
-    ),
-    ),
-    ),
-    GestureDetector(
-    onTap: () {
-    context.read<DashboardCubit>().onTabTapped(1);
-    },
-    child: Padding(
-    padding: EdgeInsets.only(
-    top: isPortrait ? screenHeight * 0.04 : screenHeight * 0.05,
-    left: 20,
-    right: 20,
-    ),
-    child: Row(
-    children: [
-    Expanded(
-    child: Card(
-    shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(20),
-    ),
-    elevation: 5,
-    color: Colors.white.withOpacity(0.5),
-    child: ClipRRect(
-    borderRadius: BorderRadius.circular(25),
-    child: SizedBox(
-    height: 170,
-    child:Stack(
-      children: [
-        Image.asset(
-          'assets/images/guitar2.jpg',
-          fit: BoxFit.cover,
-          width: isPortrait ? 300 : screenWidth * 0.70,
-          height: isPortrait ? 200 : screenWidth * 0.20,
-        ),
-        const Positioned(
-          top: 10,
-          left: 10,
-          child: Column(
-            crossAxisAlignment:
-            CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Play-along song',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              Text(
-                'with chords',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-    ),
-    ),
-    ),
-    ),
-      if (!isPortrait) const SizedBox(width: 20),
-      Expanded(
-        child: GestureDetector(
-          onTap: () {
-            context.read<DashboardCubit>().onTabTapped(3);
-          },
-          child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            elevation: 5,
-            color: Colors.white.withOpacity(0.5),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: SizedBox(
-                height: 170,
-                child: Stack(
-                  children: [
-                    Image.asset(
-                      'assets/images/pick.jpg',
-                      width:
-                      isPortrait ? 180 : screenWidth * 0.70,
-                      height:
-                      isPortrait ? 170 : screenWidth * 0.20,
-                      fit: BoxFit.cover,
-                    ),
-                    const Positioned(
-                      bottom: 10,
-                      right: 10,
-                      child: Column(
-                        crossAxisAlignment:
-                        CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            'Tune your ',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            'Instrument Easily ',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            themeData.colorScheme.primary,
+            themeData.colorScheme.secondary,
+            themeData.colorScheme.tertiary,
+            themeData.colorScheme.surface,
+            themeData.colorScheme.background,
+          ],
         ),
       ),
-    ],
-    ),
-    ),
-    ),
-      Padding(
-        padding: EdgeInsets.only(
-          top: isPortrait ? screenHeight * 0.06 : screenHeight * 0.13,
-          left: 35,
-          right: 20,
-        ),
-        child: const Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            'Play your first beginner song',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.only(
-          top: isPortrait ? screenHeight * 0.025 : screenHeight * 0.02,
-          left: 20,
-          right: 20,
-        ),
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(40),
-          ),
-          elevation: 5,
-          color: Colors.white.withOpacity(0.5),
-          child: Row(
-            children: [
-              const Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                top: isPortrait ? screenHeight * 0.01 : screenHeight * 0.10,
+                left: 34,
+                right: 20,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
                       Text(
-                        'IM Yours by Jason Mraz',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                        'HI Pasta!',
+                        style: GoogleFonts.kanit(
+                          fontSize: isPortrait ? 30 : 24,
+                          fontWeight: FontWeight.w800,
+                          color: themeData.textTheme.bodyMedium?.color,
                         ),
                       ),
-                      SizedBox(height: 10),
-                      Text(
-                        'Start learning now!',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
+                      const SizedBox(width: 8),
+                      Image.asset(
+                        'assets/icons/wave.jpg',
+                        width: 30,
+                        height: 30,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Welcome to Melody Mentor',
+                    style: TextStyle(
+                      fontSize: isPortrait ? 14 : 12,
+                      color: themeData.textTheme.bodyMedium?.color,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                context.read<DashboardCubit>().onTabTapped(5);
+              },
+              child: Padding(
+                padding: EdgeInsets.only(
+                  top: isPortrait ? screenHeight * 0.04 : screenHeight * 0.04,
+                  left: 20,
+                  right: 20,
+                ),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  elevation: 5,
+                  color: Colors.white.withOpacity(0.5),
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Explore your music learning journey!',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                'GET STARTED',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(40),
+                          bottomRight: Radius.circular(40),
+                        ),
+                        child: SizedBox(
+                          width: isPortrait ? 180 : screenWidth * 0.3,
+                          height: 130,
+                          child: Image.asset(
+                            'assets/images/guitar1.jpg',
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(40),
-                  bottomRight: Radius.circular(40),
+            ),
+            GestureDetector(
+              onTap: () {
+                context.read<DashboardCubit>().onTabTapped(1);
+              },
+              child: Padding(
+                padding: EdgeInsets.only(
+                  top: isPortrait ? screenHeight * 0.04 : screenHeight * 0.05,
+                  left: 20,
+                  right: 20,
                 ),
-                child: SizedBox(
-                  width: isPortrait ? 180 : screenWidth * 0.3,
-                  height: 130,
-                  child: Image.asset(
-                    'assets/images/song1.jpg',
-                    fit: BoxFit.cover,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        elevation: 5,
+                        color: Colors.white.withOpacity(0.5),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(25),
+                          child: SizedBox(
+                            height: 170,
+                            child: Stack(
+                              children: [
+                                Image.asset(
+                                  'assets/images/guitar2.jpg',
+                                  fit: BoxFit.cover,
+                                  width: isPortrait ? 300 : screenWidth * 0.70,
+                                  height: isPortrait ? 200 : screenWidth * 0.20,
+                                ),
+                                const Positioned(
+                                  top: 10,
+                                  left: 10,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Play-along song',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      Text(
+                                        'with chords',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (!isPortrait) const SizedBox(width: 20),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          context.read<DashboardCubit>().onTabTapped(3);
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          elevation: 5,
+                          color: Colors.white.withOpacity(0.5),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: SizedBox(
+                              height: 170,
+                              child: Stack(
+                                children: [
+                                  Image.asset(
+                                    'assets/images/pick.jpg',
+                                    width:
+                                        isPortrait ? 180 : screenWidth * 0.70,
+                                    height:
+                                        isPortrait ? 170 : screenWidth * 0.20,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  const Positioned(
+                                    bottom: 10,
+                                    right: 10,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          'Tune your ',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Instrument Easily ',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                top: isPortrait ? screenHeight * 0.06 : screenHeight * 0.13,
+                left: 35,
+                right: 20,
+              ),
+              child: const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Play your first beginner song',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                top: isPortrait ? screenHeight * 0.025 : screenHeight * 0.02,
+                left: 20,
+                right: 20,
+              ),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(40),
+                ),
+                elevation: 5,
+                color: Colors.white.withOpacity(0.5),
+                child: Row(
+                  children: [
+                    const Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'IM Yours by Jason Mraz',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'Start learning now!',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(40),
+                        bottomRight: Radius.circular(40),
+                      ),
+                      child: SizedBox(
+                        width: isPortrait ? 180 : screenWidth * 0.3,
+                        height: 130,
+                        child: Image.asset(
+                          'assets/images/song1.jpg',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-      ],
-    ),
-    ),
     );
   }
 }

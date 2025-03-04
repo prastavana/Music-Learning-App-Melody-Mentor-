@@ -841,10 +841,10 @@ packages:
     dependency: "direct main"
     description:
       name: sensors_plus
-      sha256: "905282c917c6bb731c242f928665c2ea15445aa491249dea9d98d7c79dc8fd39"
+      sha256: "142212b10316640e9b14fe508e2a292707d5f264aed3b1d6dabe61b8cb15e839"
       url: "https://pub.dev"
     source: hosted
-    version: "6.1.1"
+    version: "6.0.0"
   sensors_plus_platform_interface:
     dependency: transitive
     description:

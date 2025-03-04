@@ -1,11 +1,64 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:music_learning_app/core/theme/app_theme.dart';
 import 'package:music_learning_app/core/theme/theme_cubit.dart';
+import 'package:music_learning_app/core/utils/gyroscope_sensor_service.dart';
 import 'package:music_learning_app/features/auth/presentation/view/profile_view.dart';
 import 'package:music_learning_app/features/dashboard/presentation/view_model/dashboard_cubit.dart';
 
-class SettingsView extends StatelessWidget {
+class SettingsView extends StatefulWidget {
   const SettingsView({super.key});
+
+  @override
+  State<SettingsView> createState() => _SettingsViewState();
+}
+
+class _SettingsViewState extends State<SettingsView> {
+  late GyroscopeSensorService _gyroscopeService;
+  bool _isAutoThemeEnabled = false;
+  bool _isLightTheme = false;
+  bool _themeToggled = false; // Added state variable
+
+  @override
+  void initState() {
+    super.initState();
+    _gyroscopeService = GyroscopeSensorService(
+      onTiltChanged: (rotationX, rotationY) {
+        if (_isAutoThemeEnabled) {
+          double angle = atan2(rotationX, rotationY) * (180 / pi);
+
+          // Check for a left tilt between 0 and 70 degrees
+          if (angle.round() <= 0 && angle.round() >= -70) {
+            if (!_themeToggled) {
+              // Check if theme has already been toggled
+              if (_isLightTheme) {
+                context.read<ThemeCubit>().emit(AppTheme.darkTheme);
+              } else {
+                context.read<ThemeCubit>().emit(AppTheme.lightTheme);
+              }
+              setState(() {
+                _isLightTheme = !_isLightTheme;
+                _themeToggled = true; // Set theme toggled to true
+              });
+            }
+          } else {
+            setState(() {
+              _themeToggled = false; // Reset theme toggled when out of range
+            });
+          }
+        }
+      },
+    );
+    _gyroscopeService.startListening();
+  }
+
+  @override
+  void dispose() {
+    _gyroscopeService.stopListening();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,15 +124,25 @@ class SettingsView extends StatelessWidget {
                       return Divider(color: themeData.dividerColor);
                     },
                   ),
+                  SwitchListTile(
+                    title: const Text('Auto Theme (Gyroscope)'),
+                    value: _isAutoThemeEnabled,
+                    onChanged: (value) {
+                      setState(() {
+                        _isAutoThemeEnabled = value;
+                        if (!value) {
+                          _isLightTheme = false;
+                          _themeToggled = false;
+                        }
+                      });
+                    },
+                  ),
                   BlocBuilder<ThemeCubit, ThemeData>(
                     builder: (context, themeData) {
                       final isDarkMode =
                           themeData.brightness == Brightness.dark;
                       return SwitchListTile(
-                        title: Text(
-                            isDarkMode
-                                ? 'Dark Mode'
-                                : 'Light Mode', // Dynamic text
+                        title: Text(isDarkMode ? 'Dark Mode' : 'Light Mode',
                             style: TextStyle(
                                 color: themeData.textTheme.bodyMedium?.color,
                                 fontSize: 18)),
@@ -87,6 +150,11 @@ class SettingsView extends StatelessWidget {
                             size: 30, color: themeData.iconTheme.color),
                         value: isDarkMode,
                         onChanged: (value) {
+                          setState(() {
+                            _isAutoThemeEnabled = false;
+                            _isLightTheme = false;
+                            _themeToggled = false;
+                          });
                           themeCubit.toggleTheme();
                         },
                         activeColor: Colors.purple,

@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:music_learning_app/features/chords/data/model/song_hive_model.dart';
-
-import 'app/app.dart';
-import 'app/di/di.dart';
+import 'package:music_learning_app/app/app.dart';
+import 'package:music_learning_app/app/di/di.dart';
+import 'package:music_learning_app/core/network/hive_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter(); // Initialize Hive for Flutter
-  Hive.registerAdapter(
-      SongHiveModelAdapter()); // Register SongHiveModel adapter
-  Hive.registerAdapter(
-      LyricSectionHiveModelAdapter()); // Register LyricSectionHiveModel adapter
-  await Hive.openBox<SongHiveModel>('songsBox'); // Open a Hive box for songs
+  await HiveService.init(); // Initialize Hive with HiveService
   await initDependencies(); // Initialize dependencies from di.dart
+  print('Main: Hive and dependencies initialized');
   runApp(const App());
 }

@@ -1,48 +1,54 @@
 import 'package:hive/hive.dart';
+import 'package:music_learning_app/app/constants/hive_table_constant.dart';
+import 'package:music_learning_app/features/auth/data/model/auth_hive_model.dart';
+import 'package:music_learning_app/features/chords/data/model/song_hive_model.dart';
 import 'package:path_provider/path_provider.dart';
-
-import '../../app/constants/hive_table_constant.dart';
-import '../../features/auth/data/model/auth_hive_model.dart';
-import '../../features/chords/data/model/song_hive_model.dart';
 
 class HiveService {
   static Future<void> init() async {
     // Initialize the database
     var directory = await getApplicationDocumentsDirectory();
     var path = '${directory.path}/db_melodymentor';
-
     Hive.init(path);
 
     // Register Adapters
     Hive.registerAdapter(AuthHiveModelAdapter());
     Hive.registerAdapter(SongHiveModelAdapter());
+    Hive.registerAdapter(
+        LyricSectionHiveModelAdapter()); // Added for LyricSectionHiveModel
   }
 
   Future<void> register(AuthHiveModel auth) async {
     var box = await Hive.openBox<AuthHiveModel>(HiveTableConstant.studentBox);
     await box.put(auth.studentId, auth);
+    await box.close();
   }
 
   Future<void> deleteAuth(String id) async {
     var box = await Hive.openBox<AuthHiveModel>(HiveTableConstant.studentBox);
     await box.delete(id);
+    await box.close();
   }
 
   Future<List<AuthHiveModel>> getAllAuth() async {
     var box = await Hive.openBox<AuthHiveModel>(HiveTableConstant.studentBox);
-    return box.values.toList();
+    final authList = box.values.toList();
+    await box.close();
+    return authList;
   }
 
   // Login using email and password
   Future<AuthHiveModel> login(String email, String password) async {
     var box = await Hive.openBox<AuthHiveModel>(HiveTableConstant.studentBox);
     try {
-      return box.values.firstWhere(
+      final auth = box.values.firstWhere(
         (element) => element.email == email && element.password == password,
       );
+      await box.close();
+      return auth;
     } catch (e) {
-      throw Exception(
-          "Invalid email or password."); // Explicitly throw an exception.
+      await box.close();
+      throw Exception("Invalid email or password.");
     }
   }
 
@@ -54,15 +60,41 @@ class HiveService {
     await Hive.close();
   }
 
-  // Add the getAllSongs method here
+  // Fetch all songs from Hive
   Future<List<SongHiveModel>> getAllSongs() async {
     var box = await Hive.openBox<SongHiveModel>(HiveTableConstant.songBox);
-    return box.values.toList(); // Fetch and return all songs
+    final songs = box.values.toList();
+    await box.close();
+    return songs;
   }
 
-  // Add the getSongById method here if you haven't already
+  // Fetch a song by ID from Hive
   Future<SongHiveModel?> getSongById(String id) async {
     var box = await Hive.openBox<SongHiveModel>(HiveTableConstant.songBox);
-    return box.get(id); // Fetch song by ID from the box
+    final song = box.get(id);
+    await box.close();
+    return song;
+  }
+
+  // Save or update a single song in Hive
+  Future<void> saveSong(SongHiveModel song) async {
+    var box = await Hive.openBox<SongHiveModel>(HiveTableConstant.songBox);
+    await box.put(song.id, song); // Use song ID as key
+    await box.close();
+  }
+
+  // Save multiple songs in Hive
+  Future<void> saveSongs(List<SongHiveModel> songs) async {
+    var box = await Hive.openBox<SongHiveModel>(HiveTableConstant.songBox);
+    final songMap = {for (var song in songs) song.id: song};
+    await box.putAll(songMap);
+    await box.close();
+  }
+
+  // Clear all songs from Hive
+  Future<void> clearSongs() async {
+    var box = await Hive.openBox<SongHiveModel>(HiveTableConstant.songBox);
+    await box.clear();
+    await box.close();
   }
 }

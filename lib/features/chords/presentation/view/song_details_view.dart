@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:music_learning_app/app/constants/api_endpoints.dart';
 import 'package:music_learning_app/core/theme/theme_cubit.dart';
-
-import '../../../../app/constants/api_endpoints.dart';
 
 class SongDetailsView extends StatelessWidget {
   final Map<String, dynamic> song;
 
-  SongDetailsView({required this.song});
+  const SongDetailsView({super.key, required this.song});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +15,7 @@ class SongDetailsView extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             title: Text(
-              song['songName'],
+              song['songName'] ?? 'Unknown Song',
               style: TextStyle(color: themeData.appBarTheme.foregroundColor),
             ),
             backgroundColor: themeData.appBarTheme.backgroundColor,
@@ -52,16 +51,16 @@ class SongDetailsView extends StatelessWidget {
                       ),
                       _buildSection(
                         title: "Chord Diagrams",
-                        items: song['chordDiagrams'],
+                        items: song['chordDiagrams'] as List<dynamic>?,
                         itemBuilder: (item, themeData) =>
-                            _buildImage(item, themeData),
+                            _buildImage(item as String, themeData),
                         themeData: themeData,
                       ),
                       _buildSection(
                         title: "Lyrics",
-                        items: song['lyrics'],
-                        itemBuilder: (item, themeData) =>
-                            _buildLyricText(item, themeData),
+                        items: song['lyrics'] as List<dynamic>?,
+                        itemBuilder: (item, themeData) => _buildLyricText(
+                            item as Map<String, dynamic>, themeData),
                         themeData: themeData,
                       ),
                     ],
@@ -81,22 +80,36 @@ class SongDetailsView extends StatelessWidget {
     required Widget Function(dynamic item, ThemeData themeData) itemBuilder,
     required ThemeData themeData,
   }) {
-    if (items == null || items.isEmpty) return SizedBox.shrink();
+    if (items == null || items.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Text(
+          "$title: Not available",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: themeData.textTheme.bodyMedium?.color,
+          ),
+        ),
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title,
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: themeData.textTheme.bodyMedium?.color)),
-        SizedBox(height: 8),
+        Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: themeData.textTheme.bodyMedium?.color,
+          ),
+        ),
+        const SizedBox(height: 8),
         Wrap(
           spacing: 8.0,
           runSpacing: 8.0,
           children: items.map((item) => itemBuilder(item, themeData)).toList(),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
       ],
     );
   }
@@ -131,6 +144,8 @@ class SongDetailsView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.error, color: Colors.red),
+                const Text('Image unavailable offline',
+                    style: TextStyle(color: Colors.grey, fontSize: 12)),
               ],
             ),
           );
@@ -139,34 +154,33 @@ class SongDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildLyricText(dynamic lyric, ThemeData themeData) {
-    if (lyric is Map && lyric.containsKey('section')) {
-      if (lyric.containsKey('parsedDocxFile')) {
-        final parsedLyric = lyric['parsedDocxFile'];
-        if (parsedLyric is String && parsedLyric.isNotEmpty) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Text(parsedLyric,
-                style: TextStyle(color: themeData.textTheme.bodyMedium?.color)),
-          );
-        } else {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Text(lyric['section'],
-                style: TextStyle(color: themeData.textTheme.bodyMedium?.color)),
-          );
-        }
+  Widget _buildLyricText(Map<String, dynamic> lyric, ThemeData themeData) {
+    if (lyric.containsKey('section')) {
+      if (lyric.containsKey('parsedDocxFile') &&
+          lyric['parsedDocxFile'] is String &&
+          lyric['parsedDocxFile'].isNotEmpty) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            lyric['parsedDocxFile'] as String,
+            style: TextStyle(color: themeData.textTheme.bodyMedium?.color),
+          ),
+        );
       }
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Text(lyric['section'],
-            style: TextStyle(color: themeData.textTheme.bodyMedium?.color)),
+        child: Text(
+          lyric['section'] as String? ?? 'Unnamed Section',
+          style: TextStyle(color: themeData.textTheme.bodyMedium?.color),
+        ),
       );
     } else {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Text("Invalid Lyric Format",
-            style: TextStyle(color: themeData.textTheme.bodyMedium?.color)),
+        child: Text(
+          "Invalid Lyric Format",
+          style: TextStyle(color: themeData.textTheme.bodyMedium?.color),
+        ),
       );
     }
   }

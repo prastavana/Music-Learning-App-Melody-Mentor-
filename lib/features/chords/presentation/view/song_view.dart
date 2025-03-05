@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:music_learning_app/core/theme/theme_cubit.dart'; // Import ThemeCubit
+import 'package:music_learning_app/core/theme/theme_cubit.dart';
 import 'package:music_learning_app/features/chords/domain/entity/song_entity.dart';
 import 'package:music_learning_app/features/chords/presentation/view/song_details_view.dart';
 import 'package:music_learning_app/features/chords/presentation/view_model/song_bloc.dart';
@@ -8,6 +8,8 @@ import 'package:music_learning_app/features/chords/presentation/view_model/song_
 import 'package:music_learning_app/features/chords/presentation/view_model/song_state.dart';
 
 class SongView extends StatefulWidget {
+  const SongView({super.key});
+
   @override
   _SongViewState createState() => _SongViewState();
 }
@@ -29,16 +31,12 @@ class _SongViewState extends State<SongView> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, ThemeData>(
-      // Wrap with ThemeCubit BlocBuilder
       builder: (context, themeData) {
         return Scaffold(
           appBar: AppBar(
             title: Text("Song View",
-                style: TextStyle(
-                    color: themeData
-                        .appBarTheme.foregroundColor)), // Use themeData
-            backgroundColor:
-                themeData.appBarTheme.backgroundColor, // Use themeData
+                style: TextStyle(color: themeData.appBarTheme.foregroundColor)),
+            backgroundColor: themeData.appBarTheme.backgroundColor,
           ),
           body: Container(
             decoration: BoxDecoration(
@@ -46,11 +44,11 @@ class _SongViewState extends State<SongView> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  themeData.colorScheme.primary, // Use themeData
-                  themeData.colorScheme.secondary, // Use themeData
-                  themeData.colorScheme.tertiary, // Use themeData
-                  themeData.colorScheme.surface, // Use themeData
-                  themeData.colorScheme.background, // Use themeData
+                  themeData.colorScheme.primary,
+                  themeData.colorScheme.secondary,
+                  themeData.colorScheme.tertiary,
+                  themeData.colorScheme.surface,
+                  themeData.colorScheme.background,
                 ],
               ),
             ),
@@ -62,7 +60,6 @@ class _SongViewState extends State<SongView> {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       children: ["Ukulele", "Guitar", "Piano"].map((category) {
                         return GestureDetector(
                           onTap: () {
@@ -77,12 +74,11 @@ class _SongViewState extends State<SongView> {
                             child: Container(
                               decoration: BoxDecoration(
                                 color: selectedCategory == category
-                                    ? themeData
-                                        .colorScheme.tertiary // Use themeData
+                                    ? themeData.colorScheme.tertiary
                                     : Colors.transparent,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 8),
                               child: Text(
                                 category,
@@ -102,29 +98,33 @@ class _SongViewState extends State<SongView> {
                       }).toList(),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Expanded(
-                    child: BlocBuilder<SongBloc, SongState>(
+                    child: BlocConsumer<SongBloc, SongState>(
+                      listener: (context, state) {
+                        if (state is SongError) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(state.message)),
+                          );
+                        }
+                      },
                       builder: (context, state) {
                         if (state is SongLoading) {
                           return Center(
-                            child: CircularProgressIndicator(
-                              color: themeData
-                                  .colorScheme.tertiary, // Use themeData
-                            ),
-                          );
+                              child: CircularProgressIndicator(
+                                  color: themeData.colorScheme.tertiary));
                         } else if (state is SongError) {
                           return Center(
-                            child: Text("Error: ${state.message}",
-                                style: TextStyle(color: Colors.red)),
-                          );
+                              child: Text("Error: ${state.message}",
+                                  style: const TextStyle(color: Colors.red)));
                         } else if (state is SongLoaded) {
                           List<SongEntity> songs = state.songs;
                           if (songs.isEmpty) {
-                            return Center(
+                            return const Center(
                               child: Text(
-                                  "No songs available in this category.",
-                                  style: TextStyle(color: Colors.grey)),
+                                "No songs found for this category on the server or locally.",
+                                style: TextStyle(color: Colors.grey),
+                              ),
                             );
                           }
                           return ListView.builder(
@@ -136,15 +136,18 @@ class _SongViewState extends State<SongView> {
                                   color: Colors.white.withOpacity(0.5),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                margin: EdgeInsets.symmetric(vertical: 8),
+                                margin: const EdgeInsets.symmetric(vertical: 8),
                                 child: ListTile(
-                                  contentPadding: EdgeInsets.all(16),
-                                  title: Text(song.songName,
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: themeData.textTheme.bodyMedium
-                                              ?.color)), // Use themeData
+                                  contentPadding: const EdgeInsets.all(16),
+                                  title: Text(
+                                    song.songName,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          themeData.textTheme.bodyMedium?.color,
+                                    ),
+                                  ),
                                   onTap: () {
                                     Navigator.push(
                                       context,
@@ -159,7 +162,7 @@ class _SongViewState extends State<SongView> {
                             },
                           );
                         }
-                        return Center(
+                        return const Center(
                           child: Text("Select a category to load songs.",
                               style: TextStyle(color: Colors.grey)),
                         );

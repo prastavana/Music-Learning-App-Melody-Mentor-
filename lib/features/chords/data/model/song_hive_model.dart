@@ -44,7 +44,6 @@ class SongHiveModel extends Equatable {
         chordDiagrams = const [],
         docxFiles = const [];
 
-  // From Entity
   factory SongHiveModel.fromEntity(SongEntity entity) {
     return SongHiveModel(
       id: entity.id,
@@ -58,7 +57,6 @@ class SongHiveModel extends Equatable {
     );
   }
 
-  // To Entity
   SongEntity toEntity() {
     return SongEntity(
       id: id,
@@ -92,7 +90,6 @@ class LyricSectionHiveModel extends Equatable {
     this.parsedDocxFile,
   });
 
-  // From Entity
   factory LyricSectionHiveModel.fromEntity(LyricSection entity) {
     return LyricSectionHiveModel(
       section: entity.section,
@@ -101,7 +98,6 @@ class LyricSectionHiveModel extends Equatable {
     );
   }
 
-  // To Entity
   LyricSection toEntity() {
     return LyricSection(
       section: section ?? "",

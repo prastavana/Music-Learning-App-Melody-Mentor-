@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:music_learning_app/core/theme/app_theme.dart';
 import 'package:music_learning_app/features/dashboard/presentation/view/dashboard_view.dart';
 import 'package:music_learning_app/features/tuner/presentation/view_model/tuner/tuner_bloc.dart';
-import 'package:provider/provider.dart';
 
 import '../core/theme/theme_cubit.dart';
 import '../features/auth/presentation/view_model/login/login_bloc.dart';
@@ -26,9 +25,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Start shake detection when the app is running
-
-    return MultiProvider(
+    return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => getIt<LoginBloc>()),
         BlocProvider(create: (_) => getIt<DashboardCubit>()),
@@ -40,7 +37,6 @@ class App extends StatelessWidget {
         BlocProvider(create: (_) => getIt<TunerBloc>()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeData>(
-        // Make sure this is here
         builder: (context, themeData) {
           print("App BlocBuilder: brightness = ${themeData.brightness}");
           return MaterialApp(

@@ -36,4 +36,8 @@ class AppColors {
       Color(0xFF7A68A6); // Even Darker Lavender
   static const Color modalGradientEnd =
       Color(0xFF4A89B8); // Even Darker Sky Blue
+
+// Custom Success and Warning Colors
+  static const Color successColor = Color(0xFF4CAF50); // Green
+  static const Color warningColor = Color(0xFFFFC107); // Yellow
 }

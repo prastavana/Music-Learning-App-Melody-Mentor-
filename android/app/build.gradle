@@ -1,6 +1,6 @@
 plugins {
     id "com.android.application"
-    id "kotlin-android"
+    id "org.jetbrains.kotlin.android" // Corrected Kotlin plugin ID
     id "dev.flutter.flutter-gradle-plugin"
 }
 
@@ -10,12 +10,12 @@ android {
     ndkVersion "25.2.9519653"
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17 // Changed to 17
+        targetCompatibility JavaVersion.VERSION_17 // Changed to 17
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17" // Changed to 17
     }
 
     defaultConfig {
@@ -28,9 +28,13 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.debug // Be careful with this for release builds
         }
     }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.20" //added kotlin stdlib dependency
 }
 
 flutter {

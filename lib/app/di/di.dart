@@ -10,10 +10,7 @@ import '../../core/common/internet_checker/data/network_info_impl.dart';
 import '../../core/common/internet_checker/domain/internet_checker.dart';
 import '../../core/common/internet_checker/presentation/internet_connectivity_cubit.dart';
 import '../../core/network/api_service.dart';
-import '../../core/network/data_repository.dart';
 import '../../core/network/hive_service.dart';
-import '../../core/network/local_data_source.dart';
-import '../../core/network/remote_data_source.dart';
 import '../../core/theme/theme_cubit.dart';
 import '../../features/auth/data/data_source/auth_local_data_souce/auth_local_data_source.dart';
 import '../../features/auth/data/data_source/auth_remote_data_source/auth_remote_data_source.dart';
@@ -28,7 +25,6 @@ import '../../features/auth/presentation/view_model/signup/register_bloc.dart';
 import '../../features/chords/data/data_source/song_data_source.dart';
 import '../../features/chords/data/data_source/song_local_data_source/song_local_data_source.dart';
 import '../../features/chords/data/data_source/song_remote_data_source/song_remote_data_source.dart';
-import '../../features/chords/data/model/song_hive_model.dart';
 import '../../features/chords/data/repository/song_local_repository.dart';
 import '../../features/chords/data/repository/song_remote_repository.dart';
 import '../../features/chords/domain/use_case/song_usecase.dart';
@@ -44,13 +40,7 @@ import '../../features/session/data/data_source/session_remote_data_source.dart'
 import '../../features/session/data/repository/session_remote_repository.dart';
 import '../../features/session/domain/use_case/get_session_usecase.dart';
 import '../../features/session/presentation/view_model/session_bloc.dart';
-import '../../features/tuner/data/data_source/tuner_local_data_source.dart';
-import '../../features/tuner/data/repository/tuner_repository_impl.dart';
-import '../../features/tuner/domain/use_case/analyze_frequency_usecase.dart';
-import '../../features/tuner/domain/use_case/get_closest_note_usecase.dart';
-import '../../features/tuner/domain/use_case/start_recording_usecase.dart';
-import '../../features/tuner/domain/use_case/stop_recording_usecase.dart';
-import '../../features/tuner/presentation/view_model/tuner_bloc.dart';
+import '../../features/tuner/presentation/view_model/tuner/tuner_bloc.dart';
 import '../shared_prefs/token_shared_prefs.dart';
 
 final getIt = GetIt.instance;
@@ -67,9 +57,8 @@ Future<void> initDependencies() async {
   await _initLoginDependencies();
   await _initSharedPreferences();
   await _initThemeCubit();
-  await _initTunerDependencies();
   await _initNetworkDependencies();
-  await _initDataRepository();
+  await _initTunerDependencies();
 }
 
 Future<void> _initSharedPreferences() async {
@@ -256,29 +245,6 @@ _initSessionDependencies() {
   getIt.registerFactory(() => SessionBloc(getSessions: getIt()));
 }
 
-_initTunerDependencies() {
-  getIt.registerLazySingleton<TunerLocalDataSource>(
-      () => TunerLocalDataSource());
-  getIt.registerLazySingleton<TunerRepositoryImpl>(
-      () => TunerRepositoryImpl(getIt<TunerLocalDataSource>()));
-
-  getIt.registerLazySingleton(
-      () => StartRecordingUseCase(getIt<TunerRepositoryImpl>()));
-  getIt.registerLazySingleton(
-      () => StopRecordingUseCase(getIt<TunerRepositoryImpl>()));
-  getIt.registerLazySingleton(
-      () => AnalyzeFrequencyUseCase(getIt<TunerRepositoryImpl>()));
-  getIt.registerLazySingleton(
-      () => GetClosestNoteUseCase(getIt<TunerRepositoryImpl>()));
-
-  getIt.registerFactory(() => TunerBloc(
-        startRecordingUseCase: getIt(),
-        stopRecordingUseCase: getIt(),
-        analyzeFrequencyUseCase: getIt(),
-        getClosestNoteUseCase: getIt(),
-      ));
-}
-
 _initNetworkDependencies() {
   // External Dependencies
   getIt.registerLazySingleton(() => Connectivity());
@@ -299,20 +265,8 @@ _initNetworkDependencies() {
   );
 }
 
-_initDataRepository() {
-  getIt.registerLazySingleton(
-      () => RemoteDataSource<dynamic>(getIt<ApiService>()));
-  getIt.registerLazySingleton(
-      () => LocalDataSource<List<SongHiveModel>>(getIt<HiveService>()));
-
-  getIt.registerLazySingleton(() => DataRepository<List<SongHiveModel>>(
-        getIt<RemoteDataSource<List<SongHiveModel>>>(),
-        getIt<InternetChecker>(),
-        localDataSource: getIt<LocalDataSource<List<SongHiveModel>>>(),
-      ));
-
-  getIt.registerLazySingleton(() => DataRepository<dynamic>(
-        getIt<RemoteDataSource<dynamic>>(),
-        getIt<InternetChecker>(),
-      ));
+_initTunerDependencies() {
+  getIt.registerFactory<TunerBloc>(
+    () => TunerBloc(),
+  );
 }

@@ -38,6 +38,13 @@ dependencies:
   youtube_player_iframe: ^4.0.4
   webview_flutter: ^4.9.0
   connectivity_plus: ^5.0.2
+  fluentui_system_icons: ^1.1.223
+  pitch_detector_dart: ^0.0.7
+  flutter_audio_capture: ^1.1.6
+  syncfusion_flutter_gauges: ^21.2.4
+  
+
+
 
 
 

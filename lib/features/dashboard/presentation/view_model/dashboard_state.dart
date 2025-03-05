@@ -24,7 +24,7 @@ class DashboardState {
           SongView(),
           LessonView(),
           SessionView(),
-          TunerView(),
+          TunerPage(),
           SettingsView(), // Add TunerView to the list of views
         ],
       );

@@ -44,11 +44,6 @@ class SongDetailsView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Warning: Lyrics may not be displayed correctly.",
-                        style: TextStyle(
-                            color: themeData.textTheme.bodyMedium?.color),
-                      ),
                       _buildSection(
                         title: "Chord Diagrams",
                         items: song['chordDiagrams'] as List<dynamic>?,
@@ -117,6 +112,8 @@ class SongDetailsView extends StatelessWidget {
   Widget _buildImage(String imagePath, ThemeData themeData) {
     final correctedImagePath = imagePath.replaceFirst("uploads/", "");
     final imageUrl = ApiEndpoints.imageUrl + correctedImagePath;
+    print('Loading image: $imageUrl'); // Log the URL being loaded
+
     return SizedBox(
       width: 100,
       height: 100,
@@ -124,7 +121,10 @@ class SongDetailsView extends StatelessWidget {
         imageUrl,
         fit: BoxFit.cover,
         loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
+          if (loadingProgress == null) {
+            print('Image loaded successfully: $imageUrl'); // Log success
+            return child;
+          }
           return Center(
             child: CircularProgressIndicator(
               value: loadingProgress.expectedTotalBytes != null
@@ -136,7 +136,8 @@ class SongDetailsView extends StatelessWidget {
           );
         },
         errorBuilder: (context, exception, stackTrace) {
-          print('Image load error: $exception');
+          print(
+              'Image load error for $imageUrl: $exception, Stack: $stackTrace'); // Enhanced error logging
           return SizedBox(
             width: 100,
             height: 100,
@@ -144,8 +145,11 @@ class SongDetailsView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.error, color: Colors.red),
-                const Text('Image unavailable offline',
-                    style: TextStyle(color: Colors.grey, fontSize: 12)),
+                const Text(
+                  'Image unavailable',
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                  textAlign: TextAlign.center,
+                ),
               ],
             ),
           );
@@ -155,33 +159,41 @@ class SongDetailsView extends StatelessWidget {
   }
 
   Widget _buildLyricText(Map<String, dynamic> lyric, ThemeData themeData) {
-    if (lyric.containsKey('section')) {
-      if (lyric.containsKey('parsedDocxFile') &&
-          lyric['parsedDocxFile'] is String &&
-          lyric['parsedDocxFile'].isNotEmpty) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text(
-            lyric['parsedDocxFile'] as String,
-            style: TextStyle(color: themeData.textTheme.bodyMedium?.color),
+    final section = lyric['section'] as String? ?? 'Unnamed Section';
+    final parsedDocxFile = lyric['parsedDocxFile'] as List<dynamic>? ?? [];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            section,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: themeData.textTheme.bodyMedium?.color,
+            ),
           ),
-        );
-      }
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Text(
-          lyric['section'] as String? ?? 'Unnamed Section',
-          style: TextStyle(color: themeData.textTheme.bodyMedium?.color),
-        ),
-      );
-    } else {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Text(
-          "Invalid Lyric Format",
-          style: TextStyle(color: themeData.textTheme.bodyMedium?.color),
-        ),
-      );
-    }
+          const SizedBox(height: 4),
+          if (parsedDocxFile.isNotEmpty)
+            ...parsedDocxFile.map((line) => Text(
+                  line as String,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: themeData.textTheme.bodyMedium?.color,
+                  ),
+                ))
+          else
+            Text(
+              "No lyrics available",
+              style: TextStyle(
+                fontSize: 14,
+                color: themeData.textTheme.bodyMedium?.color?.withOpacity(0.7),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }

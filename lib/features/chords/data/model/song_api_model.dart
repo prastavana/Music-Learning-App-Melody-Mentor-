@@ -76,7 +76,6 @@ class LyricSectionApiModel extends Equatable {
 
   Map<String, dynamic> toJson() => _$LyricSectionApiModelToJson(this);
 
-  // Convert to Entity
   LyricSection toEntity() {
     return LyricSection(
       section: section ?? "",
@@ -85,7 +84,6 @@ class LyricSectionApiModel extends Equatable {
     );
   }
 
-  // Create from Entity
   factory LyricSectionApiModel.fromEntity(LyricSection entity) {
     return LyricSectionApiModel(
       section: entity.section,

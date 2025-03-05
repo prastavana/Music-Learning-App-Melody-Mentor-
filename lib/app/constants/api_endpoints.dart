@@ -15,8 +15,9 @@ class ApiEndpoints {
   static const String getAllStudent = "auth/getAllStudents";
   static const String updateStudent = "auth/updateStudent/";
   static const String deleteStudent = "auth/deleteStudent/";
+  // static const String imageUrl = "http://10.0.2.2:3000/uploads/";
   static const String imageUrl =
-      "http://10.0.2.2:3000/uploads/"; // Corrected line
+      "http://192.168.1.67:3000/uploads/"; // Corrected li
   static const String uploadImage = "auth/uploadImage";
 
   // ====================== SOong Routes ======================
